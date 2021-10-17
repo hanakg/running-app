@@ -1,9 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'kotlin-android-extensions'
     id 'kotlin-kapt'
-    id "androidx.navigation.safeargs.kotlin"
+    id("androidx.navigation.safeargs")
+    //id "androidx.navigation.safeargs.kotlin"
 }
 
 android {
@@ -20,8 +20,16 @@ android {
     }
 
     buildTypes {
+        debug{
+            debuggable true
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            debuggable false
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -31,6 +39,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    buildFeatures{
+        viewBinding true
     }
 }
 
@@ -51,8 +62,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
 
     // Room
-    implementation "androidx.room:room-runtime:2.2.5"
-    kapt "androidx.room:room-compiler:2.2.5"
+    implementation "androidx.room:room-runtime:2.3.0"
+    kapt "androidx.room:room-compiler:2.3.0"
 
     // Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:2.2.5"
@@ -82,7 +93,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:2.25.2"
 
     // Dagger Android
-    api 'com.google.dagger:dagger-android:2.28.1'
+    api 'com.google.dagger:dagger-android:2.35.1'
     api 'com.google.dagger:dagger-android-support:2.28.1'
     kapt 'com.google.dagger:dagger-android-processor:2.23.2'
 
@@ -93,7 +104,7 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     // MPAndroidChart
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    //implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
-    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    //implementation 'android.arch.lifecycle:extensions:1.1.1'
 }
