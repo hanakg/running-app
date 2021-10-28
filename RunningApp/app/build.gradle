@@ -1,9 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-android-extensions'
     id 'kotlin-kapt'
-    id("androidx.navigation.safeargs")
-    //id "androidx.navigation.safeargs.kotlin"
+    //id("androidx.navigation.safeargs")
+    id "androidx.navigation.safeargs.kotlin"
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -97,6 +99,21 @@ dependencies {
     api 'com.google.dagger:dagger-android-support:2.28.1'
     kapt 'com.google.dagger:dagger-android-processor:2.23.2'
 
+    // Activity KTX for viewModels()
+    implementation "androidx.activity:activity-ktx:1.1.0"
+
+    //Dagger - Hilt
+    implementation 'com.google.dagger:hilt-android:2.39.1'
+    kapt 'com.google.dagger:hilt-compiler:2.39.1'
+
+    // For instrumentation tests
+    androidTestImplementation  'com.google.dagger:hilt-android-testing:2.39.1'
+    kaptAndroidTest 'com.google.dagger:hilt-compiler:2.39.1'
+
+    // For local unit tests
+    testImplementation 'com.google.dagger:hilt-android-testing:2.39.1'
+    kaptTest 'com.google.dagger:hilt-compiler:2.39.1'
+
     // Easy Permissions
     implementation 'pub.devrel:easypermissions:3.0.0'
 
@@ -107,4 +124,7 @@ dependencies {
     //implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     //implementation 'android.arch.lifecycle:extensions:1.1.1'
+}
+kapt {
+    correctErrorTypes true
 }
