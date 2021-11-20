@@ -7,6 +7,8 @@
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/drawable/ic_run.xml" value="0.3828125" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/drawable/ic_settings.xml" value="0.3828125" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/drawable/ic_statistics.xml" value="0.3828125" />
+        <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout-land/fragment_statistics.xml" value="0.1697530864197531" />
+        <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout-land/fragment_tracking.xml" value="0.1697530864197531" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/activity_main.xml" value="0.1951219512195122" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_run.xml" value="0.20520833333333333" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_settings.xml" value="0.20520833333333333" />
@@ -14,6 +16,7 @@
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_statistics.xml" value="0.20520833333333333" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_tracking.xml" value="0.20520833333333333" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/item_run.xml" value="0.20520833333333333" />
+        <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/marker_view.xml" value="0.20052083333333334" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/menu/bottom_nav_menu.xml" value="0.20520833333333333" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/menu/botton_nav_menu.xml" value="0.36666666666666664" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/menu/toolbar_tracking_menu.xml" value="0.36666666666666664" />
