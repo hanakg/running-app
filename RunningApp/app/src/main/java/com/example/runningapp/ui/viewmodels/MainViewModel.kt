@@ -15,6 +15,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     val mainRepository: MainRepository
 ):ViewModel(){
+    //A repo-ban lévő adatbázis műveletek meghívása
     private val runsSortedByDate=mainRepository.getAllRunsByDate()
     private val runsSortedByDistance=mainRepository.getAllRunsByDistance()
     private val runsSortedByBurnedCalories=mainRepository.getAllRunsByBurnedCalories()

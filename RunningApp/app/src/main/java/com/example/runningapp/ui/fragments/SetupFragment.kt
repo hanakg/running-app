@@ -39,6 +39,7 @@ class SetupFragment:Fragment(R.layout.fragment_setup) {
             )
         }
 
+        //Tovább léphetünk-e, a következő fragmentre(run fragment). Akkor léphetünk tovább, ha ki van töltve  az összes mező(név, súly)
         tvContinue.setOnClickListener{
             val success=writePersonalDataToSharedPref()
             if (success){
@@ -50,6 +51,7 @@ class SetupFragment:Fragment(R.layout.fragment_setup) {
         }
     }
 
+    // A felhasználó nevének és súlyának beállítása
     private fun writePersonalDataToSharedPref():Boolean{
         val name=etName.text.toString()
         val weight=etWeight.text.toString()
@@ -63,7 +65,7 @@ class SetupFragment:Fragment(R.layout.fragment_setup) {
             .putBoolean(KEY_FIRST_TIME_TOGGLE, false)
             .apply()
 
-        val toolbarText="Gyerünk, $name!"
+        val toolbarText="Hello, $name!"
         requireActivity().tvToolbarTitle.text=toolbarText
         return true
     }

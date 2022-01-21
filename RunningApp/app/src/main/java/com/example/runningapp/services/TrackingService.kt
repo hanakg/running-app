@@ -86,6 +86,7 @@ class TrackingService:LifecycleService() {
         })
     }
 
+    // Rögzítés megállítása mentés nélkül
     private fun killService(){
         serviceKilled=true
         isFirstRun=true
@@ -95,7 +96,7 @@ class TrackingService:LifecycleService() {
         stopSelf()
     }
 
-
+    // Amikor küldünk egy parancsot a servicenknek akkor ez a metódus hívódik meg és meghívja a megfelelő műveletet
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
             when(it.action){
@@ -129,6 +130,7 @@ class TrackingService:LifecycleService() {
     private var timeStarted=0L
     private var lastSecondTimestamp=0L
 
+    // Idő számlálásának elindítása
     private fun startTimer(){
         addEmptyPolyline()
         isTracking.postValue(true)
@@ -138,7 +140,7 @@ class TrackingService:LifecycleService() {
             while (isTracking.value!!){
                 //Now-start time
                 lapTime=System.currentTimeMillis()-timeStarted
-
+                // Az új laptime postolása
                 timeRunInMillisec.postValue(totalTimeRun+lapTime)
 
                 if (timeRunInMillisec.value!!>=lastSecondTimestamp+1000L){
@@ -156,6 +158,7 @@ class TrackingService:LifecycleService() {
         isTimerEnabled=false
     }
 
+    // Értesítések frissítése
     private fun updateNotificationTrackingState(isTracking: Boolean){
         val notificationActionText=if(isTracking) "Megállítás" else "Folytatás"
         val pendingIntent=if(isTracking){
@@ -186,6 +189,7 @@ class TrackingService:LifecycleService() {
 
     @SuppressLint("MissingPermission")
     private fun updateLocationTracking(isTracking: Boolean){
+        // Itt állítjuk be, hogy milyen gyakran frissítse a helyzetünket, mi lehet a leggyorsabb frissítés
         if (isTracking){
             if (TrackingUtility.hasLocationPermission(this)){
                 val request=LocationRequest().apply {
@@ -205,6 +209,7 @@ class TrackingService:LifecycleService() {
         }
     }
 
+    // Amíg fut a rögzítés addig újra és újra új koordinátákat ad hozzá a koordináta listához
     val locationCallback=object :LocationCallback(){
         override fun onLocationResult(result: LocationResult?) {
             super.onLocationResult(result)
@@ -220,6 +225,7 @@ class TrackingService:LifecycleService() {
         }
     }
 
+    // Új koordináta hozzáadása a koordináta listához
     private fun addPathPoint(location: Location?){
         location?.let {
             val pos=LatLng(location.latitude, location.longitude)
@@ -241,6 +247,7 @@ class TrackingService:LifecycleService() {
 
         val notificationManager=getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+        // Csak akkor kell, ha az android rendszer Oreo vagy későbbi verziójú
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
             createNotificationChannel(notificationManager)
         }
@@ -256,7 +263,7 @@ class TrackingService:LifecycleService() {
         })
     }
 
-
+    // Értesítése csatorna elkészítése
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel(notificationManager: NotificationManager){
         val channel=NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, IMPORTANCE_LOW)

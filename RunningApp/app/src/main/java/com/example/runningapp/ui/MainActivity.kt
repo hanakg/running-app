@@ -23,10 +23,10 @@ class MainActivity : AppCompatActivity() {
         navigateToTrackingFragmentIfNeeded(intent)
 
         setSupportActionBar(toolbar)
-        bottomNavigationView.setupWithNavController(navHostFragment.findNavController())
+        bottomNavigationView.setupWithNavController(navHostFragment.findNavController()) //Navigáció beállítása, amire rákattintunk, oda navigál
         bottomNavigationView.setOnNavigationItemReselectedListener { /*Nincs művelet*/ }
 
-
+        //Melyik esetekben kell muatatni a bottomNavigationt(futások, statisztika, beállítások)
         navHostFragment.findNavController()
             .addOnDestinationChangedListener { _, destination, _ ->
                 when (destination.id) {
@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         navigateToTrackingFragmentIfNeeded(intent)
     }
 
+    //Melyik esetben navigáljon a tracking fragment-re
     private fun navigateToTrackingFragmentIfNeeded(intent: Intent?){
         if(intent?.action==ACTION_SHOW_TRACKING_FRAGMENT){
             navHostFragment.findNavController().navigate(R.id.action_global_trackingFragment)

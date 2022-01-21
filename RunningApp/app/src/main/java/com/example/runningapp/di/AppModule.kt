@@ -23,7 +23,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
+    //Hogyan tudja a Dagger-Hilt létrehozni az adatbázist
     @Provides
     fun provideRunningDatabase(
         @ApplicationContext app:Context
@@ -33,6 +33,7 @@ object AppModule {
         RUNNING_DATABASE_NAME
     ).build()
 
+    //Hogyan tudja a Dagger-Hilt létrehozni a RunDao objectet(adatbázis műveletek)
     @Provides
     fun providePunDao(db: RunningDatabase)=db.getRunDao()
 
@@ -40,12 +41,15 @@ object AppModule {
     fun provideSharedPreferences(@ApplicationContext app: Context)=
         app.getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE)
 
+    //Dagger-Hilt - név tárolására létrehozás
     @Provides
     fun provideName(sharedPref:SharedPreferences)=sharedPref.getString(KEY_NAME, "")?:""
 
+    //Dagger-Hilt - súly tárolására létrehozás
     @Provides
     fun provideWeight(sharedPref:SharedPreferences)=sharedPref.getFloat(KEY_WEIGHT, 80f)
 
+    //Dagger-Hilt - első futása-e az alkalmazásnak tárolására létrehozás
     @Provides
     fun provideFirstTimeToggle(sharedPref:SharedPreferences)=sharedPref.getBoolean(
         KEY_FIRST_TIME_TOGGLE, true)

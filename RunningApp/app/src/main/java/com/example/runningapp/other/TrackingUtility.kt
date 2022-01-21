@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit
 
 
 object TrackingUtility {
+    //Adott e engedélyt a felhasználó a helymeghatározásra. Android Q előtt nem kellett engedély a Background_Location-hoz
     fun hasLocationPermission(context: Context)=
         if (Build.VERSION.SDK_INT<Build.VERSION_CODES.Q){
             EasyPermissions.hasPermissions(
@@ -25,6 +26,7 @@ object TrackingUtility {
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         }
 
+    // Az útvonal hosszának kiszámítása
     fun calculatePolylineLength(polyline: Polyline): Float{
         var distance = 0f
         for (i in 0..polyline.size-2){
@@ -46,6 +48,7 @@ object TrackingUtility {
         return  distance
     }
 
+    // Formázott idő visszaadása
     fun getFormattedStopWatchTime(ms:Long, includeMillisec:Boolean=false):String{
         var milliseconds=ms
         val hours=TimeUnit.MILLISECONDS.toHours(milliseconds)
@@ -56,7 +59,7 @@ object TrackingUtility {
         if (!includeMillisec){
             return "${if(hours<10) "0" else ""}$hours:" +
                     "${if (minutes<10) "0" else ""}$minutes:" +
-                    "${if (seconds<10) "0" else ""}$seconds:"
+                    "${if (seconds<10) "0" else ""}$seconds"
         }
         milliseconds-=TimeUnit.SECONDS.toMillis(seconds)
         milliseconds/=10
