@@ -2,7 +2,7 @@
     <string name="app_name">RunningApp</string>
     <string-array name="filter_options">
         <item>Dátum</item>
-        <item>Futási idő</item>
+        <item>Időtartam</item>
         <item>Távolság</item>
         <item>Átlagos sebesség</item>
         <item>Elégetett kalóriák</item>

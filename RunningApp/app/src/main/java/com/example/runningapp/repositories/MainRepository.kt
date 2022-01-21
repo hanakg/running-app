@@ -4,6 +4,7 @@ import com.example.runningapp.db.Run
 import com.example.runningapp.db.RunDao
 import javax.inject.Inject
 
+//Adatbázis funkciók/műveletek (a RunDao műveletek meghívása)
 class MainRepository @Inject constructor(
     val runDao: RunDao
 ){

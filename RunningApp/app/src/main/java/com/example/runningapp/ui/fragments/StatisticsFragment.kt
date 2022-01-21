@@ -53,7 +53,7 @@ class StatisticsFragment:Fragment(R.layout.fragment_statistics) {
         }
 
         barChart.apply {
-            description.text="Átlag sebesség összesítve"
+            description.text=""
             legend.isEnabled=false
         }
     }

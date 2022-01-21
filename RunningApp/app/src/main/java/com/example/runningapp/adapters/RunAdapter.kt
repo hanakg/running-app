@@ -23,7 +23,7 @@ class RunAdapter:RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
         override fun areItemsTheSame(oldItem: Run, newItem: Run): Boolean {
             return oldItem.id==newItem.id
         }
-
+         // Megnézni, hogy a két item hashCode-ja megegyezik e
         override fun areContentsTheSame(oldItem: Run, newItem: Run): Boolean {
             return oldItem.hashCode()==newItem.hashCode()
         }
@@ -43,6 +43,7 @@ class RunAdapter:RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
         )
     }
 
+    // Adatok kiolvasása, és beállítása a visszajelzéshez
     override fun onBindViewHolder(holder: RunViewHolder, position: Int) {
         val run=differ.currentList[position]
         holder.itemView.apply {

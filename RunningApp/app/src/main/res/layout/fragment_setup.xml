@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Welcome!\nPlease enter your name and weight."
+        android:text="Üdvözöllek!\nKérlek írd be a nevedet és a súlyodat."
         android:textAlignment="center"
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/tilName"
@@ -29,10 +29,10 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="204dp"
+            android:layout_height="match_parent"
             android:ems="10"
-            android:hint="Your Name"
+            android:hint="A neved"
             android:inputType="textPersonName" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -47,10 +47,10 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etWeight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Your Weight"
+            android:layout_width="206dp"
+            android:layout_height="match_parent"
             android:ems="10"
+            android:hint="A súlyod"
             android:inputType="numberDecimal" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -81,7 +81,7 @@
             android:id="@+id/tvContinue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Continue"
+            android:text="Folytatás"
             android:textColor="@color/colorAccent"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"

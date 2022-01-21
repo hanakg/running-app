@@ -106,6 +106,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         })
     }
 
+    // Megfelelő action meghívása
     private fun toggleRun(){
         if (isTracking){
             menu?.getItem(0)?.isVisible=true
@@ -116,6 +117,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         }
     }
 
+    // Menü létrehozása, beállítása
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
 
@@ -123,6 +125,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         this.menu=menu
     }
 
+    // A menü elem láthatóságának beállítása
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
 
@@ -140,6 +143,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         return super.onOptionsItemSelected(item)
     }
 
+    // Kilépés a rögzítésből üzenet megjelenítése
     private fun showCancelTrackingDialog(){
         CancelTrackingDialog().apply {
             setYesListener {
@@ -148,12 +152,14 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         }.show(parentFragmentManager, CANCEL_TRACKING_DIALOG_TAG)
     }
 
+    // Rögzítés megállítása
     private fun stopRun(){
         tvTimer.text="00:00:00:00"
         sendCommandToService(ACTION_STOP_SERVICE)
         findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
     }
 
+    // A gomb szövegének beállítása
     private fun updateTracking(isTracking:Boolean){
         this.isTracking=isTracking
         if (!isTracking && currentTimeMillisec>0L){
@@ -167,6 +173,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         }
     }
 
+    // Oda mozgatja a kamerát a térképen, ahol éppen a felhasználó van
     private fun moveCameraToUser(){
         if (pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty()){
             map?.animateCamera(
@@ -178,6 +185,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         }
     }
 
+    // Annyira nagyít rá a térképre, hogy látszódjon az egész útvonalunk
     private fun zoomToSeeWholeTrack(){
         val bounds=LatLngBounds.Builder()
         for (polyline in pathPoints){
@@ -196,6 +204,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         )
     }
 
+    // A futás rögzítésének befejezése, majd a futása adatainak mentése az adatbázisba, hogy később vissza tudjuk nézni
     private fun endRunAndSaveToDatabase(){
         map?.snapshot { bmp->
             var distanceInMeters=0
@@ -211,13 +220,14 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             viewModel.insertRun(run)
             Snackbar.make(
                 requireActivity().findViewById(R.id.rootView),
-                "Run saved successfully",
+                "A futás mentése sikeres",
                 Snackbar.LENGTH_LONG
             ).show()
             stopRun()
         }
     }
 
+    // Ez rajzolja ki az összes helyzetet, az egész útvonalunkat
     private fun addAllPolylines(){
         for (polyline in pathPoints){
             val polylineOptions=PolylineOptions()
@@ -228,6 +238,8 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         }
     }
 
+    // Az utolsó helyzet(koordináta) kirajzolása, itt állítjuk be a vonal színét, szélességét...
+    // Ez csak az utolsó két helyzetet köti össze, nem rajzolja ki az összes koordinátát
     private fun addLatestPolyline(){
         if (pathPoints.isNotEmpty() && pathPoints.last().size > 1){
             val preLastLatLng=pathPoints.last()[pathPoints.last().size-2]
@@ -241,12 +253,15 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         }
     }
 
+    // Parancs küldése a servicenek
     private fun sendCommandToService(action: String)=
         Intent(requireContext(), TrackingService::class.java).also {
             it.action=action
             requireContext().startService(it)
         }
 
+    //Térkép nézet folytatás, elindítás, leállítás, megállítás, mi történjen, ha kevés a memória
+    //Térkép életciklus
     override fun onResume() {
         super.onResume()
 
@@ -277,6 +292,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         mapView?.onLowMemory()
     }
 
+    //A térkép státuszának mentése
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 

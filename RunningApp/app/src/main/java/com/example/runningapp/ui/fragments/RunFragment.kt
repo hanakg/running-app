@@ -30,7 +30,7 @@ class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCal
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requestPermission()
+        requestPermission() //Engedélykérés meghívása
         setupRecyclerView()
 
         when(viewModel.sortType){
@@ -65,6 +65,7 @@ class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCal
             runAdapter.submitList(it)
         })
 
+        //Ha a Start gombra kattintunk, akkor átugrik a tracking fragment-re
         starttrack.setOnClickListener {
             findNavController().navigate(R.id.action_runFragment_to_trackingFragment)
         }
@@ -76,6 +77,7 @@ class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCal
         layoutManager=LinearLayoutManager(requireContext())
     }
 
+    //Engedély kérése a helymeghatározásra. Ha már adott engedélyt rá a felhasználó, akkor egyszerűen tovább lép
     private fun requestPermission(){
         if (TrackingUtility.hasLocationPermission(requireContext())){
             return
@@ -100,6 +102,7 @@ class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCal
         }
     }
 
+    //Mi történjen, ha a felhasználó elutasítja az engedélykérést. Mutatja majd, hogy az alkalmazás nem fog rendesen működni az engedély megadása nélkül
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
         if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)){
             AppSettingsDialog.Builder(this).build().show()
@@ -108,9 +111,11 @@ class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCal
         }
     }
 
+    //Ha engedélyezte
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
     }
 
+    //Engedélyek kezelése->EasyPermission meghívása
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
