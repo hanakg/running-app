@@ -1,9 +1,9 @@
 package com.example.runningapp.ui.fragments
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -14,21 +14,19 @@ import com.example.runningapp.other.Constants.ACTION_PAUSE_SERVICE
 import com.example.runningapp.other.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.runningapp.other.Constants.ACTION_STOP_SERVICE
 import com.example.runningapp.other.Constants.MAP_ZOOM
-import com.example.runningapp.other.Constants.POLYLINE_COLOR
 import com.example.runningapp.other.Constants.POLYLINE_WIDTH
 import com.example.runningapp.other.TrackingUtility
 import com.example.runningapp.services.Polyline
-import com.example.runningapp.services.Polylines
 import com.example.runningapp.services.TrackingService
 import com.example.runningapp.ui.viewmodels.MainViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_tracking.*
+import timber.log.Timber
 import java.lang.Math.round
 import java.util.*
 import javax.inject.Inject
@@ -41,6 +39,11 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
 
     private var isTracking=false
     private var pathPoints= mutableListOf<Polyline>()
+    private var actualSpeed=0.0
+
+    private var lineColor=Color.RED
+
+    private var stopTimer=0L
 
     private var map: GoogleMap? = null
 
@@ -86,6 +89,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         }
 
         subscribeToObservers()
+
     }
 
     private fun subscribeToObservers(){
@@ -103,6 +107,12 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             currentTimeMillisec=it
             val formattedTime=TrackingUtility.getFormattedStopWatchTime(currentTimeMillisec, true)
             tvTimer.text=formattedTime
+        })
+
+        TrackingService.actualSpeed.observe(viewLifecycleOwner, Observer {
+            actualSpeed=it
+            tvActualSpeed.text="${actualSpeed} Km/h"
+            stopTrackingIfTheUserStop()
         })
     }
 
@@ -155,6 +165,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
     // Rögzítés megállítása
     private fun stopRun(){
         tvTimer.text="00:00:00:00"
+        stopTimer=0
         sendCommandToService(ACTION_STOP_SERVICE)
         findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
     }
@@ -165,11 +176,13 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         if (!isTracking && currentTimeMillisec>0L){
             btnToggleRun.text="Start"
             btnFinishRun.visibility=View.VISIBLE
+            stopTimer=0
         }
         else if(isTracking){
             btnToggleRun.text="Stop"
             menu?.getItem(0)?.isVisible=true
             btnFinishRun.visibility=View.GONE
+            stopTimer=0
         }
     }
 
@@ -230,8 +243,17 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
     // Ez rajzolja ki az összes helyzetet, az egész útvonalunkat
     private fun addAllPolylines(){
         for (polyline in pathPoints){
+            if(actualSpeed<=5){
+                lineColor = Color.RED
+            }
+            else if (actualSpeed>5 && actualSpeed<=15){
+                lineColor=Color.YELLOW
+            }
+            else{
+                lineColor=Color.GREEN
+            }
             val polylineOptions=PolylineOptions()
-                .color(POLYLINE_COLOR)
+                .color(lineColor)
                 .width(POLYLINE_WIDTH)
                 .addAll(polyline)
             map?.addPolyline(polylineOptions)
@@ -244,8 +266,18 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         if (pathPoints.isNotEmpty() && pathPoints.last().size > 1){
             val preLastLatLng=pathPoints.last()[pathPoints.last().size-2]
             val lastLatLng=pathPoints.last().last()
+            if(actualSpeed<=5){
+                lineColor = Color.RED
+            }
+            else if (actualSpeed>5 && actualSpeed<=15){
+                lineColor=Color.YELLOW
+            }
+            else{
+                lineColor=Color.GREEN
+            }
+
             val polylineOptions=PolylineOptions()
-                .color(POLYLINE_COLOR)
+                .color(lineColor)
                 .width(POLYLINE_WIDTH)
                 .add(preLastLatLng)
                 .add(lastLatLng)
@@ -260,29 +292,41 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             requireContext().startService(it)
         }
 
+    private fun stopTrackingIfTheUserStop(){
+        if(actualSpeed<1.0){
+            stopTimer=stopTimer+1
+        }
+
+
+        if (stopTimer==10L){
+            sendCommandToService(ACTION_PAUSE_SERVICE)
+        }
+        Timber.d("Ido: ${stopTimer}")
+    }
+
     //Térkép nézet folytatás, elindítás, leállítás, megállítás, mi történjen, ha kevés a memória
     //Térkép életciklus
     override fun onResume() {
         super.onResume()
-
+        stopTimer=0
         mapView?.onResume()
     }
 
     override fun onStart() {
         super.onStart()
-
+        stopTimer=0
         mapView?.onStart()
     }
 
     override fun onStop() {
         super.onStop()
-
+        stopTimer=0
         mapView?.onStop()
     }
 
     override fun onPause() {
         super.onPause()
-
+        stopTimer=0
         mapView?.onPause()
     }
 

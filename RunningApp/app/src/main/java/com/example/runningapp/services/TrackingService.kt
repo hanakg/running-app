@@ -9,6 +9,7 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.location.Location
+import android.location.LocationListener
 import android.os.Build
 import android.os.Looper
 import androidx.annotation.RequiresApi
@@ -28,11 +29,8 @@ import com.example.runningapp.other.Constants.NOTIFICATION_ID
 import com.example.runningapp.other.Constants.TIMER_UPDATE_INTERVAL
 import com.example.runningapp.other.TrackingUtility
 import com.example.runningapp.ui.MainActivity
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
-import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -41,6 +39,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 typealias Polyline=MutableList<LatLng>
 typealias Polylines=MutableList<Polyline>
@@ -51,10 +50,13 @@ class TrackingService:LifecycleService() {
     var isFirstRun=true
     var serviceKilled=false
 
+    //lateinit var mLocation: Location // location
+
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private val timeRunInSeconds=MutableLiveData<Long>()
+
 
     @Inject
     lateinit var baseNotificationBuilder: NotificationCompat.Builder
@@ -65,6 +67,7 @@ class TrackingService:LifecycleService() {
         val timeRunInMillisec=MutableLiveData<Long>()
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<Polylines>()
+        val actualSpeed=MutableLiveData<Double>();
     }
 
     private fun postInitialValues(){
@@ -72,13 +75,14 @@ class TrackingService:LifecycleService() {
         pathPoints.postValue(mutableListOf())
         timeRunInSeconds.postValue(0L)
         timeRunInMillisec.postValue(0L)
+        actualSpeed.postValue(0.0)
     }
 
     override fun onCreate() {
         super.onCreate()
         curNotificationBuilder=baseNotificationBuilder
         postInitialValues()
-        //fusedLocationProviderClient=FusedLocationProviderClient(this)
+        fusedLocationProviderClient=FusedLocationProviderClient(this)
 
         isTracking.observe(this, Observer {
             updateLocationTracking(it)
@@ -219,6 +223,11 @@ class TrackingService:LifecycleService() {
                         addPathPoint(location)
                         //Teszt
                         Timber.d("Új helyzet: ${location.latitude}, ${location.latitude}")
+                        //onLocationChanged(location)
+                        val speed :Double = ((location.speed * 3.6 )*100.0).roundToInt()/100.0
+                        actualSpeed.postValue(speed)
+                        Timber.d("Sebesség: ${speed}")
+                        //setSpeed(location)
                     }
                 }
             }
