@@ -37,6 +37,20 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    override fun onStart() {
+        super.onStart()
+        // We will start writing our code here.
+    }
+
+    private fun connected() {
+        // Then we will write some more code here.
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Aaand we will finish off here.
+    }
+
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         navigateToTrackingFragmentIfNeeded(intent)
