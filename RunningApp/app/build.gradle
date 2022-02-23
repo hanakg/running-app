@@ -126,6 +126,12 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     implementation 'android.arch.lifecycle:extensions:1.1.1'
+
+    // Spotify
+    implementation files('../libs/spotify-app-remote-release-0.7.2.aar')
+
+    implementation project(':spotify-app-remote')
+    implementation "com.google.code.gson:gson:2.6.1"
 }
 kapt {
     correctErrorTypes true
