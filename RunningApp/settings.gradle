@@ -1,3 +1,4 @@
 rootProject.name = "RunningApp"
 include ':app'
 include ':spotify-app-remote'
+include ':spotify-auth'
