@@ -3,9 +3,11 @@ package com.example.runningapp.ui.fragments
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -16,6 +18,7 @@ import com.example.runningapp.other.Constants.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.runningapp.other.SortType
 import com.example.runningapp.other.TrackingUtility
 import com.example.runningapp.ui.viewmodels.MainViewModel
+import com.example.runningapp.ui.viewmodels.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_run.*
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -25,6 +28,7 @@ import java.text.FieldPosition
 @AndroidEntryPoint
 class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCallbacks {
     private val viewModel:MainViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var runAdapter:RunAdapter
 
@@ -67,14 +71,22 @@ class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCal
 
         //Ha a Start gombra kattintunk, akkor átugrik a tracking fragment-re
         starttrack.setOnClickListener {
-            findNavController().navigate(R.id.action_runFragment_to_trackingFragment)
+            findNavController().navigate(R.id.action_runFragment_to_trackingFragment,)
         }
     }
 
     private fun setupRecyclerView()=rvRuns.apply {
         runAdapter= RunAdapter()
         adapter=runAdapter
+
         layoutManager=LinearLayoutManager(requireContext())
+
+        runAdapter.setOnClickListener(object : RunAdapter.onItemClickListener{
+            override fun onItemClick(position: Int) {
+                sharedViewModel.setPosition(position)
+                findNavController().navigate(R.id.action_runFragment_to_oneRunStatisticsFragment)
+            }
+        })
     }
 
     //Engedély kérése a helymeghatározásra. Ha már adott engedélyt rá a felhasználó, akkor egyszerűen tovább lép

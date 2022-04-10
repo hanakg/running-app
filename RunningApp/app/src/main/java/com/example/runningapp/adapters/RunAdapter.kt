@@ -1,5 +1,8 @@
 package com.example.runningapp.adapters
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,15 +11,26 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.runningapp.R
+import com.example.runningapp.databinding.ActivityMainBinding
+import com.example.runningapp.databinding.FragmentOnerunstatisticsBinding
 import com.example.runningapp.db.Run
 import com.example.runningapp.other.TrackingUtility
 import kotlinx.android.synthetic.main.item_run.view.*
+import com.example.runningapp.other.Constants
+import com.example.runningapp.ui.viewmodels.SharedViewModel
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class RunAdapter:RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
+class RunAdapter():RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
 
-    inner class RunViewHolder(itemView:View):RecyclerView.ViewHolder(itemView)
+    private lateinit var mListener:onItemClickListener
+
+    interface onItemClickListener{
+
+        fun onItemClick(position: Int)
+    }
 
     //Két lista közötti különbség kiszámítása
     val diffCallback=object:DiffUtil.ItemCallback<Run>(){
@@ -32,14 +46,14 @@ class RunAdapter:RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
     val differ=AsyncListDiffer(this, diffCallback)
 
     fun submitList(list: List<Run>)=differ.submitList(list)
-
+    private var lista: List<Run> =differ.currentList
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RunViewHolder {
         return RunViewHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.item_run,
                 parent,
                 false
-            )
+            ), mListener
         )
     }
 
@@ -52,7 +66,7 @@ class RunAdapter:RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
             val calendar=Calendar.getInstance().apply {
                 timeInMillis=run.timestamp
             }
-            val dateFormat=SimpleDateFormat("dd.MM.yy", Locale.getDefault())
+            val dateFormat=SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
             tvDate.text=dateFormat.format(calendar.time)
 
             val avgSpeed="${run.avgSpeed}km/h"
@@ -66,10 +80,29 @@ class RunAdapter:RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
             val caloriesBurned="${run.burnedCalories}kcal"
             tvCalories.text=caloriesBurned
         }
+
         return
     }
 
     override fun getItemCount(): Int {
         return differ.currentList.size
     }
+
+    fun setOnClickListener(listener:onItemClickListener){
+
+        mListener=listener
+    }
+
+
+    class RunViewHolder(itemView:View, listener: onItemClickListener):RecyclerView.ViewHolder(itemView)
+    {
+        init {
+            itemView.setOnClickListener {
+
+                listener.onItemClick(adapterPosition)
+
+            }
+        }
+    }
+
 }
