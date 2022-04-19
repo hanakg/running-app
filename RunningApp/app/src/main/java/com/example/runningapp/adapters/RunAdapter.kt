@@ -94,11 +94,10 @@ class RunAdapter():RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
     }
 
 
-    class RunViewHolder(itemView:View, listener: onItemClickListener):RecyclerView.ViewHolder(itemView)
+    inner class RunViewHolder(itemView:View, listener: onItemClickListener):RecyclerView.ViewHolder(itemView)
     {
         init {
             itemView.setOnClickListener {
-
                 listener.onItemClick(adapterPosition)
 
             }
