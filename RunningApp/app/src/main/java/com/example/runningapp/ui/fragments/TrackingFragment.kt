@@ -3,6 +3,7 @@ package com.example.runningapp.ui.fragments
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -18,6 +19,7 @@ import com.example.runningapp.other.Constants.POLYLINE_WIDTH
 import com.example.runningapp.other.TrackingUtility
 import com.example.runningapp.services.Polyline
 import com.example.runningapp.services.TrackingService
+import com.example.runningapp.ui.SpotifyActivity
 import com.example.runningapp.ui.viewmodels.MainViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -40,6 +42,9 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
     private var isTracking=false
     private var pathPoints= mutableListOf<Polyline>()
     private var actualSpeed=0.0
+    private var actualDistance=0
+
+    private var maxSpeed=0.0
 
     private var lineColor=Color.RED
 
@@ -90,6 +95,11 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
 
         subscribeToObservers()
 
+        spotify.setOnClickListener {
+            var intent=Intent(getActivity(), SpotifyActivity::class.java)
+            getActivity()?.startActivity(intent)
+        }
+
     }
 
     private fun subscribeToObservers(){
@@ -109,10 +119,27 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             tvTimer.text=formattedTime
         })
 
+        TrackingService.liveDistance.observe(viewLifecycleOwner, Observer {
+            actualDistance=it
+            if(actualDistance<1000) {
+                tvDistance.text = "${actualDistance} m"
+            }
+            else
+            {
+                val distanceDouble=actualDistance/1000.0
+                tvDistance.text = "${distanceDouble} Km"
+            }
+        })
+
         TrackingService.actualSpeed.observe(viewLifecycleOwner, Observer {
             actualSpeed=it
             tvActualSpeed.text="${actualSpeed} Km/h"
             stopTrackingIfTheUserStop()
+        })
+
+        TrackingService.highSpeed.observe(viewLifecycleOwner, Observer {
+            maxSpeed=it
+            Log.d("Teszt", "Max sebesség: ${maxSpeed}")
         })
     }
 
@@ -228,7 +255,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             val avgSpeed=round((distanceInMeters/1000f)/(currentTimeMillisec/1000f/60/60)*10)/ 10f
             val dateTimestamp=Calendar.getInstance().timeInMillis
             val caloriesBurned=((distanceInMeters/1000f)*weight).toInt()
-            val run=Run(bmp, dateTimestamp, avgSpeed, distanceInMeters, currentTimeMillisec, caloriesBurned)
+            val run=Run(bmp, dateTimestamp, avgSpeed, distanceInMeters, currentTimeMillisec, caloriesBurned, maxSpeed)
 
             viewModel.insertRun(run)
             Snackbar.make(
