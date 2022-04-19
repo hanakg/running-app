@@ -19,4 +19,5 @@ class MainRepository @Inject constructor(
     fun getTotalTimeMillisec()=runDao.getTotalTimeMillisec()
     fun getTotalBurnedCalories()=runDao.getTotalBurnedCalories()
     fun getTotalAvgSpeed()=runDao.getTotalAvgSpeed()
+    fun getTotalMaxSpeed()=runDao.getTotalMaxSpeed()
 }
