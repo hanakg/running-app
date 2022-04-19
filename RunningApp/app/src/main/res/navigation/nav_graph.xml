@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/setupFragment">
 
@@ -15,6 +16,9 @@
         <action
             android:id="@+id/action_runFragment_to_trackingFragment"
             app:destination="@id/trackingFragment" />
+        <action
+            android:id="@+id/action_runFragment_to_oneRunStatisticsFragment"
+            app:destination="@id/oneRunStatisticsFragment" />
     </fragment>
     <fragment
         android:id="@+id/setupFragment"
@@ -40,4 +44,14 @@
         android:id="@+id/settingsFragment"
         android:name="com.example.runningapp.ui.fragments.SettingsFragment"
         android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/oneRunStatisticsFragment"
+        android:name="com.example.runningapp.ui.fragments.OneRunStatisticsFragment"
+        android:label="OneRunStatisticsFragment" >
+        <action
+            android:id="@+id/action_oneRunStatisticsFragment_to_runFragment"
+            app:destination="@id/runFragment" />
+    </fragment>
+    <action android:id="@+id/action_global_OneRunStatisticsFragment"
+        app:destination="@+id/oneRunStatisticsFragment"/>
 </navigation>
