@@ -2,6 +2,7 @@ package com.example.runningapp.ui.fragments
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import androidx.fragment.app.Fragment
@@ -42,28 +43,29 @@ internal class OneRunStatisticsFragment: Fragment(R.layout.fragment_onerunstatis
         super.onViewCreated(view, savedInstanceState)
         //val run=sharedViewModel.selectedRun.value!!
         val pos=sharedViewModel.position
-       viewModel.runs.observe(viewLifecycleOwner, Observer {
-            val run= it[pos.value!!]
 
-           Glide.with(this).load(run.img).into(ivRunImage)
+        val run=sharedViewModel.selectedRun.value!!
+        Glide.with(this).load(run.img).into(ivRunImage)
 
-           val calendar= Calendar.getInstance().apply {
-               timeInMillis=run.timestamp
-           }
-           val dateFormat= SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-           tvDate.text="Dátum: "+dateFormat.format(calendar.time)
+        val calendar= Calendar.getInstance().apply {
+           timeInMillis=run.timestamp
+        }
+        val dateFormat= SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        tvDate.text="Dátum: "+dateFormat.format(calendar.time)
 
-           val avgSpeed="${run.avgSpeed}km/h"
-           tvAvgSpeed.text="Átlag sebesség: "+avgSpeed
+        val avgSpeed="${run.avgSpeed}km/h"
+        tvAvgSpeed.text="Átlag sebesség: "+avgSpeed
 
-           val distanceInKm="${run.distance/1000f}km"
-           tvDistance.text="Távolság: "+distanceInKm
+        val distanceInKm="${run.distance/1000f}km"
+        tvDistance.text="Távolság: "+distanceInKm
 
-           tvTime.text= "Idő: "+TrackingUtility.getFormattedStopWatchTime(run.timeMillisec)
+        tvTime.text= "Idő: "+TrackingUtility.getFormattedStopWatchTime(run.timeMillisec)
 
-           val caloriesBurned="${run.burnedCalories}kcal"
-           tvCalories.text="Elégetett kalóriák: "+caloriesBurned
-        })
+        val caloriesBurned="${run.burnedCalories}kcal"
+        tvCalories.text="Elégetett kalóriák: "+caloriesBurned
+
+        val maxSpeed="${run.maxSpeed}Km/h"
+        tvMaxSpeed.text="Maximum sebesség: "+maxSpeed
     }
 
 }
