@@ -61,7 +61,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Elégetett kalóriák"
+        app:layout_constraintBottom_toTopOf="@+id/tvMaxSpeed"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/tvAvgSpeed"
+ />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvMaxSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Maximum sebesség"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintBottom_toTopOf="@+id/tvAvgSpeed" />
+        app:layout_constraintBottom_toTopOf="@+id/tvCalories" />
 </androidx.constraintlayout.widget.ConstraintLayout>
