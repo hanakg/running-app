@@ -12,7 +12,8 @@ class Run(
     var avgSpeed:Float=0f,
     var distance:Int=0,
     var timeMillisec:Long=0L,
-    var burnedCalories: Int=0
+    var burnedCalories: Int=0,
+    var maxSpeed: Double=0.0
 ) {
     @PrimaryKey(autoGenerate = true)
     var id: Int? = null
