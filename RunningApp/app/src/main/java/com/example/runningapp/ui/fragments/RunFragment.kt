@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.runningapp.R
 import com.example.runningapp.adapters.RunAdapter
+import com.example.runningapp.db.Run
 import com.example.runningapp.other.Constants.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.runningapp.other.SortType
 import com.example.runningapp.other.TrackingUtility
@@ -31,6 +32,7 @@ class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCal
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var runAdapter:RunAdapter
+    private lateinit var listRun:List<Run>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -67,6 +69,7 @@ class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCal
 
         viewModel.runs.observe(viewLifecycleOwner, Observer {
             runAdapter.submitList(it)
+            listRun=it
         })
 
         //Ha a Start gombra kattintunk, akkor átugrik a tracking fragment-re
@@ -84,6 +87,7 @@ class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCal
         runAdapter.setOnClickListener(object : RunAdapter.onItemClickListener{
             override fun onItemClick(position: Int) {
                 sharedViewModel.setPosition(position)
+                sharedViewModel.setSelectedRun(listRun[position])
                 findNavController().navigate(R.id.action_runFragment_to_oneRunStatisticsFragment)
             }
         })
