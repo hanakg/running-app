@@ -26,13 +26,9 @@ import com.spotify.protocol.types.Track;
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    private val clientId = "3a1c68aea8b4495a85a6df218cf66f6a"
-    private val redirectUri = "https://com.spotify.android.spotifysdkkotlindemo/callback"
-    private var spotifyAppRemote: SpotifyAppRemote? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
         navigateToTrackingFragmentIfNeeded(intent)
@@ -50,49 +46,17 @@ class MainActivity : AppCompatActivity() {
                     else -> bottomNavigationView.visibility = View.GONE
                 }
             }
+
     }
 
     override fun onStart() {
         super.onStart()
-        val connectionParams = ConnectionParams.Builder(clientId)
-            .setRedirectUri(redirectUri)
-            .showAuthView(true)
-            .build()
-
-        SpotifyAppRemote.connect(this, connectionParams, object : Connector.ConnectionListener {
-            override fun onConnected(appRemote: SpotifyAppRemote) {
-                spotifyAppRemote = appRemote
-                Log.d("MainActivity", "Connected! Yay!")
-                // Now you can start interacting with App Remote
-                connected()
-            }
-
-            override fun onFailure(throwable: Throwable) {
-                Log.e("MainActivity", throwable.message, throwable)
-                // Something went wrong when attempting to connect! Handle errors here
-            }
-        })
-    }
-
-    private fun connected() {
-        spotifyAppRemote?.let {
-            // Play a playlist
-            val playlistURI = "spotify:playlist:37i9dQZF1DX2sUQwD7tbmL"
-            it.playerApi.play(playlistURI)
-            // Subscribe to PlayerState
-            it.playerApi.subscribeToPlayerState().setEventCallback {
-                val track: Track = it.track
-                Log.d("MainActivity", track.name + " by " + track.artist.name)
-            }
-        }
 
     }
+
 
     override fun onStop() {
         super.onStop()
-        spotifyAppRemote?.let {
-            SpotifyAppRemote.disconnect(it)
-        }
     }
 
     override fun onNewIntent(intent: Intent?) {
