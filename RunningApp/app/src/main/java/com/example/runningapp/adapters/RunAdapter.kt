@@ -26,11 +26,17 @@ import javax.inject.Inject
 class RunAdapter():RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
 
     private lateinit var mListener:onItemClickListener
+    private lateinit var mLongListener:onItemLongClickListener
 
     interface onItemClickListener{
 
         fun onItemClick(position: Int)
     }
+    interface onItemLongClickListener{
+
+        fun onItemLongClick(position: Int)
+    }
+
 
     //Két lista közötti különbség kiszámítása
     val diffCallback=object:DiffUtil.ItemCallback<Run>(){
@@ -53,7 +59,7 @@ class RunAdapter():RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
                 R.layout.item_run,
                 parent,
                 false
-            ), mListener
+            ), mListener, mLongListener
         )
     }
 
@@ -93,13 +99,20 @@ class RunAdapter():RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
         mListener=listener
     }
 
+    fun setOnLongClickListener(listener:onItemLongClickListener){
 
-    inner class RunViewHolder(itemView:View, listener: onItemClickListener):RecyclerView.ViewHolder(itemView)
+        mLongListener=listener
+    }
+
+    inner class RunViewHolder(itemView:View, listener: onItemClickListener, longListener: onItemLongClickListener):RecyclerView.ViewHolder(itemView)
     {
         init {
             itemView.setOnClickListener {
                 listener.onItemClick(adapterPosition)
-
+            }
+            itemView.setOnLongClickListener {
+                longListener.onItemLongClick(adapterPosition)
+                return@setOnLongClickListener true
             }
         }
     }
