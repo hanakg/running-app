@@ -26,6 +26,8 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.text.FieldPosition
 
+const val DELETE_RUN_DIALOG="DeleteDialog"
+
 @AndroidEntryPoint
 class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCallbacks {
     private val viewModel:MainViewModel by viewModels()
@@ -89,6 +91,21 @@ class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCal
                 sharedViewModel.setPosition(position)
                 sharedViewModel.setSelectedRun(listRun[position])
                 findNavController().navigate(R.id.action_runFragment_to_oneRunStatisticsFragment)
+            }
+        })
+        runAdapter.setOnLongClickListener(object : RunAdapter.onItemLongClickListener{
+            override fun onItemLongClick(position: Int) {
+                val deleteRunDialog=parentFragmentManager.findFragmentByTag(
+                    DELETE_RUN_DIALOG)as DeleteRunDialog?
+                deleteRunDialog?.setYesListener {
+                    viewModel.deleteRun(listRun[position])
+                }
+
+                DeleteRunDialog().apply {
+                    setYesListener {
+                        viewModel.deleteRun(listRun[position])
+                    }
+                }.show(parentFragmentManager, DELETE_RUN_DIALOG)
             }
         })
     }
