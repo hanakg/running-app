@@ -3,6 +3,7 @@ package com.example.runningapp.ui.fragments
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -26,8 +27,13 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_tracking.*
+import kotlinx.coroutines.Dispatchers.Main
 import timber.log.Timber
 import java.lang.Math.round
+import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
 
@@ -40,6 +46,10 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
     private var isTracking=false
     private var pathPoints= mutableListOf<Polyline>()
     private var actualSpeed=0.0
+    private var actualDistance=0
+
+    private var maxSpeed=0.0
+    private var minSpeed=0.0
 
     private var lineColor=Color.RED
 
@@ -50,6 +60,9 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
     private var currentTimeMillisec=0L
 
     private var menu: Menu? = null
+
+    val Fragment.packageManager get() = activity?.packageManager
+
 
     @set:Inject
     var weight=80f
@@ -65,6 +78,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         mapView.onCreate(savedInstanceState)
         btnToggleRun.setOnClickListener{
             toggleRun()
@@ -90,6 +104,16 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
 
         subscribeToObservers()
 
+        spotify.setOnClickListener {
+            var intent=Intent(getActivity(), Main::class.java)
+            val launchIntent = packageManager?.getLaunchIntentForPackage("com.spotify.music")
+            if (launchIntent != null) {
+                startActivity(launchIntent);
+            } else {
+
+            }
+        }
+
     }
 
     private fun subscribeToObservers(){
@@ -109,10 +133,36 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             tvTimer.text=formattedTime
         })
 
+        TrackingService.liveDistance.observe(viewLifecycleOwner, Observer {
+            actualDistance=it
+            if(actualDistance<1000) {
+                tvDistance.text = "${actualDistance} m"
+            }
+            else
+            {
+                val distanceDouble=actualDistance/1000.0
+                tvDistance.text = "${distanceDouble} Km"
+            }
+        })
+
         TrackingService.actualSpeed.observe(viewLifecycleOwner, Observer {
             actualSpeed=it
-            tvActualSpeed.text="${actualSpeed} Km/h"
+            if(isTracking==true) {
+                tvActualSpeed.text = "${actualSpeed} Km/h"
+            }
+            else{
+                tvActualSpeed.text = "0 Km/h"
+            }
             stopTrackingIfTheUserStop()
+        })
+
+        TrackingService.highSpeed.observe(viewLifecycleOwner, Observer {
+            maxSpeed=it
+            Log.d("Teszt", "Max sebesség: ${maxSpeed}")
+        })
+
+        TrackingService.minSpeed.observe(viewLifecycleOwner, Observer {
+            minSpeed=it
         })
     }
 
@@ -166,6 +216,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
     private fun stopRun(){
         tvTimer.text="00:00:00:00"
         stopTimer=0
+        tvActualSpeed.text="Okm/h"
         sendCommandToService(ACTION_STOP_SERVICE)
         findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
     }
@@ -227,8 +278,11 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
 
             val avgSpeed=round((distanceInMeters/1000f)/(currentTimeMillisec/1000f/60/60)*10)/ 10f
             val dateTimestamp=Calendar.getInstance().timeInMillis
+            //val dateTimestamp=java.sql.Timestamp(System.currentTimeMillis())
             val caloriesBurned=((distanceInMeters/1000f)*weight).toInt()
-            val run=Run(bmp, dateTimestamp, avgSpeed, distanceInMeters, currentTimeMillisec, caloriesBurned)
+
+
+            val run=Run(bmp, dateTimestamp, avgSpeed, distanceInMeters, currentTimeMillisec, caloriesBurned, maxSpeed, minSpeed)
 
             viewModel.insertRun(run)
             Snackbar.make(
@@ -321,12 +375,14 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
     override fun onStop() {
         super.onStop()
         stopTimer=0
+        tvActualSpeed.text="O Km/h"
         mapView?.onStop()
     }
 
     override fun onPause() {
         super.onPause()
         stopTimer=0
+        tvActualSpeed.text="O Km/h"
         mapView?.onPause()
     }
 

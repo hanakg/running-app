@@ -53,11 +53,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Összes elégetett kalória"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintBottom_toTopOf="@+id/tvTotalMaxSpeedInfo"
         app:layout_constraintEnd_toEndOf="@+id/tvTotalCalories"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/tvTotalCalories"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTotalTimeInfo" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvTotalCalories"
@@ -74,11 +74,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Átlag sebesség"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintBottom_toTopOf="@+id/tvTotalMinSpeedInfo"
         app:layout_constraintEnd_toEndOf="@+id/tvAverageSpeed"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/tvAverageSpeed"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTotalDistanceInfo" />
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvAverageSpeed"
@@ -89,13 +89,56 @@
         app:layout_constraintBottom_toTopOf="@+id/tvAverageSpeedInfo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline2" />
+//
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvTotalMinSpeedInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Minumum sebesség"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintEnd_toEndOf="@+id/tvTotalMinSpeed"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/tvTotalMinSpeed"
+        app:layout_constraintTop_toBottomOf="@+id/tvAverageSpeedInfo" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvTotalMinSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0km/h"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvTotalMinSpeedInfo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline2" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvTotalMaxSpeedInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Maximum sebesség"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintEnd_toEndOf="@+id/tvTotalMaxSpeed"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/tvTotalMaxSpeed"
+        app:layout_constraintTop_toBottomOf="@+id/tvTotalCaloriesInfo" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvTotalMaxSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0km/h"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvTotalMaxSpeedInfo"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="parent" />
+//
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.7017784" />
+        app:layout_constraintGuide_percent="0.59" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
@@ -103,12 +146,5 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
-
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/barChart"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvAverageSpeedInfo" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

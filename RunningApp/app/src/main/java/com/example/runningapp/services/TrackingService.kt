@@ -32,6 +32,7 @@ import com.example.runningapp.ui.MainActivity
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.SphericalUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,7 +51,13 @@ class TrackingService:LifecycleService() {
     var isFirstRun=true
     var serviceKilled=false
 
+    private var _highSpeed=0.0
+    private var _minSpeed=Double.MAX_VALUE
+
+    private var distance=0
+
     //lateinit var mLocation: Location // location
+    private val _locations = mutableListOf<LatLng>()
 
     @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -67,7 +74,10 @@ class TrackingService:LifecycleService() {
         val timeRunInMillisec=MutableLiveData<Long>()
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<Polylines>()
-        val actualSpeed=MutableLiveData<Double>();
+        val liveDistance=MutableLiveData<Int>()
+        val actualSpeed=MutableLiveData<Double>()
+        val highSpeed=MutableLiveData<Double>()
+        val minSpeed=MutableLiveData<Double>()
     }
 
     private fun postInitialValues(){
@@ -75,7 +85,10 @@ class TrackingService:LifecycleService() {
         pathPoints.postValue(mutableListOf())
         timeRunInSeconds.postValue(0L)
         timeRunInMillisec.postValue(0L)
+        liveDistance.postValue(0)
         actualSpeed.postValue(0.0)
+        highSpeed.postValue(0.0)
+        minSpeed.postValue(0.0)
     }
 
     override fun onCreate() {
@@ -218,13 +231,42 @@ class TrackingService:LifecycleService() {
         override fun onLocationResult(result: LocationResult?) {
             super.onLocationResult(result)
             if (isTracking.value!!){
+                val currentLocation = result!!.lastLocation
+                val latLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+
+                val lastLocation = _locations.lastOrNull()
+
+                if (lastLocation != null) {
+                    distance += SphericalUtil.computeDistanceBetween(lastLocation, latLng).roundToInt()
+                    liveDistance.value = distance
+                }
+
                 result?.locations?.let { locations->
                     for (location in locations){
+
                         addPathPoint(location)
+
+                        Timber.d("Új distance: ${distance}")
+                        //liveDistance.value=distance
                         //Teszt
                         Timber.d("Új helyzet: ${location.latitude}, ${location.latitude}")
                         //onLocationChanged(location)
                         val speed :Double = ((location.speed * 3.6 )*100.0).roundToInt()/100.0
+
+                        if(speed>_highSpeed)
+                        {
+                            _highSpeed=speed
+                            highSpeed.postValue(_highSpeed)
+                        }
+
+                        if(speed<_minSpeed)
+                        {
+                            _minSpeed=speed
+                            minSpeed.postValue(_minSpeed)
+                        }
+
+                        Timber.d("Új high speed: ${highSpeed}")
+
                         actualSpeed.postValue(speed)
                         Timber.d("Sebesség: ${speed}")
                         //setSpeed(location)
@@ -242,6 +284,8 @@ class TrackingService:LifecycleService() {
                 last().add(pos)
                 pathPoints.postValue(this)
             }
+
+            _locations.add(pos)
         }
     }
 

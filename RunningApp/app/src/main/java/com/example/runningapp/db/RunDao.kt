@@ -1,12 +1,15 @@
 package com.example.runningapp.db
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import java.sql.Timestamp
+import java.util.*
 
 @Dao
 interface RunDao {
 
-    // Table functions
+    // Rendezés valamai szerint - lekérdezés
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRun(run: Run)
 
@@ -29,7 +32,7 @@ interface RunDao {
     fun getAllRunsByBurnedCalories(): LiveData<List<Run>>
     //----------------------------------------------------------------------
 
-    // Statistics
+    // Statisztikák
     @Query("SELECT SUM(timeMillisec) FROM running_table")
     fun getTotalTimeMillisec():LiveData<Long>
 
@@ -41,6 +44,18 @@ interface RunDao {
 
     @Query("SELECT AVG(avgSpeed) FROM running_table")
     fun getTotalAvgSpeed():LiveData<Float>
+
+    @Query("SELECT MAX(maxSpeed) FROM running_table")
+    fun getTotalMaxSpeed():LiveData<Float>
+
+    @Query("SELECT MIN(minSpeed) FROM running_table")
+    fun getTotalMinSpeed():LiveData<Float>
+
+    @Query("SELECT strftime('%Y',datetime(timestamp/1000, 'unixepoch', 'localtime')) as year, COUNT(*) as count FROM running_table GROUP BY strftime('%Y',datetime(timestamp/1000, 'unixepoch', 'localtime'))")
+    fun getRunsCountByYear():LiveData<List<CountByYear>>
+
+    @Query("SELECT timestamp as value FROM running_table ")
+    fun getTimeStampt():LiveData<List<Timestamp>>
     //----------------------------------------------------------------------
 
 }

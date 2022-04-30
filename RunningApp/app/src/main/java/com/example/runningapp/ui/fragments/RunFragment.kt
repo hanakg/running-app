@@ -3,30 +3,38 @@ package com.example.runningapp.ui.fragments
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.runningapp.R
 import com.example.runningapp.adapters.RunAdapter
+import com.example.runningapp.db.Run
 import com.example.runningapp.other.Constants.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.runningapp.other.SortType
 import com.example.runningapp.other.TrackingUtility
 import com.example.runningapp.ui.viewmodels.MainViewModel
+import com.example.runningapp.ui.viewmodels.SharedViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_run.*
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.text.FieldPosition
 
+const val DELETE_RUN_DIALOG="DeleteDialog"
+
 @AndroidEntryPoint
 class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCallbacks {
     private val viewModel:MainViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private lateinit var runAdapter:RunAdapter
+    private lateinit var listRun:List<Run>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,18 +71,43 @@ class RunFragment:Fragment(R.layout.fragment_run), EasyPermissions.PermissionCal
 
         viewModel.runs.observe(viewLifecycleOwner, Observer {
             runAdapter.submitList(it)
+            listRun=it
         })
 
         //Ha a Start gombra kattintunk, akkor átugrik a tracking fragment-re
         starttrack.setOnClickListener {
-            findNavController().navigate(R.id.action_runFragment_to_trackingFragment)
+            findNavController().navigate(R.id.action_runFragment_to_trackingFragment,)
         }
     }
 
     private fun setupRecyclerView()=rvRuns.apply {
         runAdapter= RunAdapter()
         adapter=runAdapter
+
         layoutManager=LinearLayoutManager(requireContext())
+
+        runAdapter.setOnClickListener(object : RunAdapter.onItemClickListener{
+            override fun onItemClick(position: Int) {
+                sharedViewModel.setPosition(position)
+                sharedViewModel.setSelectedRun(listRun[position])
+                findNavController().navigate(R.id.action_runFragment_to_oneRunStatisticsFragment)
+            }
+        })
+        runAdapter.setOnLongClickListener(object : RunAdapter.onItemLongClickListener{
+            override fun onItemLongClick(position: Int) {
+                val deleteRunDialog=parentFragmentManager.findFragmentByTag(
+                    DELETE_RUN_DIALOG)as DeleteRunDialog?
+                deleteRunDialog?.setYesListener {
+                    viewModel.deleteRun(listRun[position])
+                }
+
+                DeleteRunDialog().apply {
+                    setYesListener {
+                        viewModel.deleteRun(listRun[position])
+                    }
+                }.show(parentFragmentManager, DELETE_RUN_DIALOG)
+            }
+        })
     }
 
     //Engedély kérése a helymeghatározásra. Ha már adott engedélyt rá a felhasználó, akkor egyszerűen tovább lép

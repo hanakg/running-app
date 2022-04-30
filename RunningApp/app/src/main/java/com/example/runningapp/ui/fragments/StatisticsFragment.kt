@@ -17,7 +17,9 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.fragment_onerunstatistics.*
 import kotlinx.android.synthetic.main.fragment_statistics.*
+import timber.log.Timber
 import kotlin.math.round
 
 @AndroidEntryPoint
@@ -28,35 +30,9 @@ class StatisticsFragment:Fragment(R.layout.fragment_statistics) {
         super.onViewCreated(view, savedInstanceState)
 
         subscribeToObservers()
-        setupBarChart()
     }
 
-    private fun setupBarChart(){
-        barChart.xAxis.apply {
-            position=XAxis.XAxisPosition.BOTTOM
-            setDrawLabels(false)
-            axisLineColor=Color.WHITE
-            textColor=Color.WHITE
-            setDrawGridLines(false)
-        }
 
-        barChart.axisLeft.apply {
-            axisLineColor=Color.WHITE
-            textColor=Color.WHITE
-            setDrawGridLines(false)
-        }
-
-        barChart.axisRight.apply {
-            axisLineColor=Color.WHITE
-            textColor=Color.WHITE
-            setDrawGridLines(false)
-        }
-
-        barChart.apply {
-            description.text=""
-            legend.isEnabled=false
-        }
-    }
 
     private fun subscribeToObservers(){
         viewModel.totalTimeRun.observe(viewLifecycleOwner, Observer {
@@ -90,18 +66,35 @@ class StatisticsFragment:Fragment(R.layout.fragment_statistics) {
             }
         })
 
-        viewModel.runsSortedByDate.observe(viewLifecycleOwner, Observer {
+        viewModel.totalMaxSpeed.observe(viewLifecycleOwner, Observer {
             it?.let {
-                val allAvgSpeeds=it.indices.map{i->BarEntry(i.toFloat(), it[i].avgSpeed)}
-                val bardataSet= BarDataSet(allAvgSpeeds, "Átlag sebesség összesítve").apply {
-                    valueTextColor=Color.WHITE
-                    color=ContextCompat.getColor(requireContext(), R.color.colorAccent)
-                }
-
-                barChart.data= BarData(bardataSet)
-                barChart.marker=CustomMarkerView(it.reversed(), requireContext(), R.layout.marker_view)
-                barChart.invalidate()
+                val maxSpeed="${it}km/h"
+                tvTotalMaxSpeed.text=maxSpeed
             }
         })
+
+        viewModel.totalMinSpeed.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val minSpeed="${it}km/h"
+                tvTotalMinSpeed.text=minSpeed
+            }
+        })
+
+        viewModel.runsCountByYear.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val count=it
+                Timber.d("${count}")
+                //tvTotalMinSpeed.text=minSpeed
+            }
+        })
+
+        viewModel.getTimeStampt.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val count=it
+                Timber.d("${count}")
+                //tvTotalMinSpeed.text=minSpeed
+            }
+        })
+
     }
 }
