@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.Glide
@@ -66,6 +67,13 @@ internal class OneRunStatisticsFragment: Fragment(R.layout.fragment_onerunstatis
 
         val maxSpeed="${run.maxSpeed}Km/h"
         tvMaxSpeed.text="Maximum sebesség: "+maxSpeed
+
+        val minSpeed="${run.minSpeed}Km/h"
+        tvMinSpeed.text="Minumum sebesség: "+minSpeed
+
+        challengestarttrack.setOnClickListener {
+            findNavController().navigate(R.id.action_oneRunStatisticsFragment_to_trackingFragment,)
+        }
     }
 
 }
