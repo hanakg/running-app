@@ -51,6 +51,9 @@
         <action
             android:id="@+id/action_oneRunStatisticsFragment_to_runFragment"
             app:destination="@id/runFragment" />
+        <action
+            android:id="@+id/action_oneRunStatisticsFragment_to_trackingFragment"
+            app:destination="@id/trackingFragment" />
     </fragment>
     <action android:id="@+id/action_global_OneRunStatisticsFragment"
         app:destination="@+id/oneRunStatisticsFragment"/>
