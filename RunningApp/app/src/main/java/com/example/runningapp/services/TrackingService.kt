@@ -52,6 +52,7 @@ class TrackingService:LifecycleService() {
     var serviceKilled=false
 
     private var _highSpeed=0.0
+    private var _minSpeed=Double.MAX_VALUE
 
     private var distance=0
 
@@ -76,6 +77,7 @@ class TrackingService:LifecycleService() {
         val liveDistance=MutableLiveData<Int>()
         val actualSpeed=MutableLiveData<Double>()
         val highSpeed=MutableLiveData<Double>()
+        val minSpeed=MutableLiveData<Double>()
     }
 
     private fun postInitialValues(){
@@ -86,6 +88,7 @@ class TrackingService:LifecycleService() {
         liveDistance.postValue(0)
         actualSpeed.postValue(0.0)
         highSpeed.postValue(0.0)
+        minSpeed.postValue(0.0)
     }
 
     override fun onCreate() {
@@ -254,6 +257,12 @@ class TrackingService:LifecycleService() {
                         {
                             _highSpeed=speed
                             highSpeed.postValue(_highSpeed)
+                        }
+
+                        if(speed<_minSpeed)
+                        {
+                            _minSpeed=speed
+                            minSpeed.postValue(_minSpeed)
                         }
 
                         Timber.d("Új high speed: ${highSpeed}")
