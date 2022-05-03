@@ -46,6 +46,10 @@
     </style>
 
 
+    <style name="TextLabel" parent="TextAppearance.Design.Hint">
+        <item name="android:textSize">40sp</item>
+    </style>
+
 
     <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:textColor">@color/colorAccent</item>
@@ -53,6 +57,15 @@
 
     <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:textColor">@color/colorAccent</item>
+    </style>
+
+    <style name="ShapeAppearanceOverlay.MyApp.Button.Circle" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">80%</item>
+        <item name="cornerSizeTopLeft">64dp</item>
+        <item name="cornerSizeBottomLeft">64dp</item>
+        <item name="cornerSizeTopRight">64dp</item>
+        <item name="cornerSizeBottomRight">64dp</item>
     </style>
 
 </resources>
