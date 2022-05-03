@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.runningapp.db.RunningDatabase
 import com.example.runningapp.other.Constants.KEY_FIRST_TIME_TOGGLE
+import com.example.runningapp.other.Constants.KEY_MOVEMENT
 import com.example.runningapp.other.Constants.KEY_NAME
 import com.example.runningapp.other.Constants.KEY_WEIGHT
 import com.example.runningapp.other.Constants.RUNNING_DATABASE_NAME
@@ -48,6 +49,10 @@ object AppModule {
     //Dagger-Hilt - súly tárolására létrehozás
     @Provides
     fun provideWeight(sharedPref:SharedPreferences)=sharedPref.getFloat(KEY_WEIGHT, 80f)
+
+    //Dagger-Hilt - mozgás típusának tárolására létrehozás
+    @Provides
+    fun provideMovement(sharedPref:SharedPreferences)=sharedPref.getString(KEY_MOVEMENT, "Futás")
 
     //Dagger-Hilt - első futása-e az alkalmazásnak tárolására létrehozás
     @Provides
