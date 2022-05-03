@@ -12,7 +12,7 @@
         android:background="@color/gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapView">
 
@@ -22,6 +22,7 @@
             android:layout_height="wrap_content"
             android:text="00:00:00:00"
             android:textSize="50sp"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/tvDistance"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -31,8 +32,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0 Km"
-            android:textSize="50sp"
+            android:textSize="40sp"
             app:layout_constraintBottom_toTopOf="@+id/tvActualSpeed"
+            app:layout_constraintTop_toBottomOf="@+id/tvTimer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -43,41 +45,73 @@
             android:text="0 Km/h"
             android:textSize="30sp"
             app:layout_constraintBottom_toTopOf="@+id/btnToggleRun"
+            app:layout_constraintTop_toBottomOf="@+id/tvDistance"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnToggleRun"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Start"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="85sp"
+            android:layout_height="85sp"
+            android:text="START"
+            android:textSize="13sp"
+            android:background="@drawable/circle"
+            app:backgroundTint="@color/purple_500"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            app:fabSize="normal"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconSize="@android:dimen/app_icon_size"
+            app:iconTint="@color/black"
             app:layout_constraintEnd_toStartOf="@+id/btnFinishRun"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvActualSpeed"
-            app:layout_constraintTop_toTopOf="@+id/tvDistance" />
+            app:layout_constraintTop_toBottomOf="@+id/tvActualSpeed"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnFinishRun"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Finish Run"
+            android:layout_width="85sp"
+            android:layout_height="85sp"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/circle"
+            app:icon="@drawable/ic_save"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconTint="@color/black"
+            app:iconSize="@android:dimen/app_icon_size"
+            app:backgroundTint="@color/purple_500"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btnToggleRun"
-            app:layout_constraintTop_toBottomOf="@+id/tvActualSpeed"
-            app:layout_constraintTop_toTopOf="@+id/tvDistance"/>
+            app:layout_constraintTop_toBottomOf="@+id/tvActualSpeed" />
 
-        <Button
-            android:id="@+id/spotify"
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/startMusicApp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Spotify"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            android:src="@drawable/ic_music"
+            app:backgroundTint="@color/purple_500"
+            app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5" />
+            app:rippleColor="@android:color/white"
+            app:tint="@android:color/black" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/setGoal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:layout_marginStart="32dp"
+            android:layout_marginBottom="32dp"
+            android:src="@drawable/ic_goal"
+            app:backgroundTint="@color/purple_500"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:rippleColor="@android:color/white"
+            app:tint="@android:color/black" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
