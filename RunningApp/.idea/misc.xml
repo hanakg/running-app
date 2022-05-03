@@ -4,7 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/drawable/bottom_nav_selector.xml" value="0.3828125" />
+        <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/drawable/circle.xml" value="0.212" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/drawable/ic_add.xml" value="0.162" />
+        <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/drawable/ic_continue.xml" value="0.196" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/drawable/ic_pause.xml" value="0.162" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/drawable/ic_play_music.xml" value="0.162" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/drawable/ic_playmusic.xml" value="0.162" />
@@ -19,13 +21,15 @@
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/activity_music_source.xml" value="0.18802083333333333" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/activity_spotify.xml" value="0.358695652173913" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/activity_webview.xml" value="0.358695652173913" />
+        <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_compareruns.xml" value="0.358695652173913" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_onerunstatistics.xml" value="0.33" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_run.xml" value="0.20520833333333333" />
+        <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_setgoal.xml" value="0.33" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_settings.xml" value="0.20520833333333333" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_setup.xml" value="0.20520833333333333" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_spotify.xml" value="0.17760416666666667" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_statistics.xml" value="0.20520833333333333" />
-        <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_tracking.xml" value="0.20520833333333333" />
+        <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/fragment_tracking.xml" value="0.2" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/item_run.xml" value="0.20520833333333333" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/layout/marker_view.xml" value="0.20052083333333334" />
         <entry key="..\:/Szakdolgozat/RunningApp/app/src/main/res/menu/bottom_nav_menu.xml" value="0.20520833333333333" />
