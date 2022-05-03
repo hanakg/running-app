@@ -78,6 +78,7 @@ class TrackingService:LifecycleService() {
         val actualSpeed=MutableLiveData<Double>()
         val highSpeed=MutableLiveData<Double>()
         val minSpeed=MutableLiveData<Double>()
+        val updater=MutableLiveData<Int>()
     }
 
     private fun postInitialValues(){
@@ -89,6 +90,7 @@ class TrackingService:LifecycleService() {
         actualSpeed.postValue(0.0)
         highSpeed.postValue(0.0)
         minSpeed.postValue(0.0)
+        updater.postValue(0)
     }
 
     override fun onCreate() {
@@ -240,6 +242,8 @@ class TrackingService:LifecycleService() {
                     distance += SphericalUtil.computeDistanceBetween(lastLocation, latLng).roundToInt()
                     liveDistance.value = distance
                 }
+
+                updater.postValue(1)
 
                 result?.locations?.let { locations->
                     for (location in locations){

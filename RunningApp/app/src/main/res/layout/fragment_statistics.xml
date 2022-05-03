@@ -7,128 +7,128 @@
     android:padding="16dp">
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalDistanceInfo"
+        android:id="@+id/tvRunDistanceInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Összes távolság"
-        app:layout_constraintBottom_toTopOf="@+id/tvAverageSpeedInfo"
-        app:layout_constraintEnd_toEndOf="@+id/tvTotalDistance"
+        app:layout_constraintBottom_toTopOf="@+id/tvRunAvgSpeedInfo"
+        app:layout_constraintEnd_toEndOf="@+id/tvRunDistance"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tvTotalDistance"
+        app:layout_constraintStart_toStartOf="@+id/tvRunDistance"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalDistance"
+        android:id="@+id/tvRunDistance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0km"
         android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvTotalDistanceInfo"
+        app:layout_constraintBottom_toTopOf="@+id/tvRunDistanceInfo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline2" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalTimeInfo"
+        android:id="@+id/tvRunTimeInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Összes idő"
-        app:layout_constraintBottom_toTopOf="@+id/tvTotalCaloriesInfo"
-        app:layout_constraintEnd_toEndOf="@+id/tvTotalTime"
+        app:layout_constraintBottom_toTopOf="@+id/tvBurnedCaloriesInfo"
+        app:layout_constraintEnd_toEndOf="@+id/tvRunTime"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tvTotalTime"
+        app:layout_constraintStart_toStartOf="@+id/tvRunTime"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalTime"
+        android:id="@+id/tvRunTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00:00"
         android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvTotalTimeInfo"
+        app:layout_constraintBottom_toTopOf="@+id/tvRunTimeInfo"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalCaloriesInfo"
+        android:id="@+id/tvBurnedCaloriesInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Összes elégetett kalória"
-        app:layout_constraintBottom_toTopOf="@+id/tvTotalMaxSpeedInfo"
-        app:layout_constraintEnd_toEndOf="@+id/tvTotalCalories"
+        app:layout_constraintBottom_toTopOf="@+id/tvMaxSpeedInfo"
+        app:layout_constraintEnd_toEndOf="@+id/tvBurnedCalories"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tvTotalCalories"
-        app:layout_constraintTop_toBottomOf="@+id/tvTotalTimeInfo" />
+        app:layout_constraintStart_toStartOf="@+id/tvBurnedCalories"
+        app:layout_constraintTop_toBottomOf="@+id/tvRunTimeInfo" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalCalories"
+        android:id="@+id/tvBurnedCalories"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0kcal"
         android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvTotalCaloriesInfo"
+        app:layout_constraintBottom_toTopOf="@+id/tvBurnedCaloriesInfo"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvAverageSpeedInfo"
+        android:id="@+id/tvRunAvgSpeedInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Átlag sebesség"
-        app:layout_constraintBottom_toTopOf="@+id/tvTotalMinSpeedInfo"
-        app:layout_constraintEnd_toEndOf="@+id/tvAverageSpeed"
+        app:layout_constraintBottom_toTopOf="@+id/tvMinSpeedInfo"
+        app:layout_constraintEnd_toEndOf="@+id/tvRunAvgSpeed"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tvAverageSpeed"
-        app:layout_constraintTop_toBottomOf="@+id/tvTotalDistanceInfo" />
+        app:layout_constraintStart_toStartOf="@+id/tvRunAvgSpeed"
+        app:layout_constraintTop_toBottomOf="@+id/tvRunDistanceInfo" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvAverageSpeed"
+        android:id="@+id/tvRunAvgSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0km/h"
         android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvAverageSpeedInfo"
+        app:layout_constraintBottom_toTopOf="@+id/tvRunAvgSpeedInfo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline2" />
 //
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalMinSpeedInfo"
+        android:id="@+id/tvMinSpeedInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Minumum sebesség"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="@+id/tvTotalMinSpeed"
+        app:layout_constraintEnd_toEndOf="@+id/tvRunMinSpeed"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tvTotalMinSpeed"
-        app:layout_constraintTop_toBottomOf="@+id/tvAverageSpeedInfo" />
+        app:layout_constraintStart_toStartOf="@+id/tvRunMinSpeed"
+        app:layout_constraintTop_toBottomOf="@+id/tvRunAvgSpeedInfo" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalMinSpeed"
+        android:id="@+id/tvRunMinSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0km/h"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvTotalMinSpeedInfo"
+        app:layout_constraintBottom_toTopOf="@+id/tvMinSpeedInfo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline2" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalMaxSpeedInfo"
+        android:id="@+id/tvMaxSpeedInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Maximum sebesség"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="@+id/tvTotalMaxSpeed"
+        app:layout_constraintEnd_toEndOf="@+id/tvRunMaxSpeed"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/tvTotalMaxSpeed"
-        app:layout_constraintTop_toBottomOf="@+id/tvTotalCaloriesInfo" />
+        app:layout_constraintStart_toStartOf="@+id/tvRunMaxSpeed"
+        app:layout_constraintTop_toBottomOf="@+id/tvBurnedCaloriesInfo" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/tvTotalMaxSpeed"
+        android:id="@+id/tvRunMaxSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0km/h"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/tvTotalMaxSpeedInfo"
+        app:layout_constraintBottom_toTopOf="@+id/tvMaxSpeedInfo"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="parent" />
 //
