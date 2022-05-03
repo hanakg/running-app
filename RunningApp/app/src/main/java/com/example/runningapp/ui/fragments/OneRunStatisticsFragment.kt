@@ -72,6 +72,7 @@ internal class OneRunStatisticsFragment: Fragment(R.layout.fragment_onerunstatis
         tvMinSpeed.text="Minumum sebesség: "+minSpeed
 
         challengestarttrack.setOnClickListener {
+            sharedViewModel.setChallenge(true)
             findNavController().navigate(R.id.action_oneRunStatisticsFragment_to_trackingFragment,)
         }
     }
