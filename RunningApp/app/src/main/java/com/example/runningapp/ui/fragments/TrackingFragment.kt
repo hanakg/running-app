@@ -1,16 +1,24 @@
 package com.example.runningapp.ui.fragments
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.text.style.LineHeightSpan
 import android.util.Log
 import android.view.*
+import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.runningapp.R
 import com.example.runningapp.db.Run
+import com.example.runningapp.other.Constants
 import com.example.runningapp.other.Constants.ACTION_PAUSE_SERVICE
 import com.example.runningapp.other.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.runningapp.other.Constants.ACTION_STOP_SERVICE
@@ -20,20 +28,18 @@ import com.example.runningapp.other.TrackingUtility
 import com.example.runningapp.services.Polyline
 import com.example.runningapp.services.TrackingService
 import com.example.runningapp.ui.viewmodels.MainViewModel
+import com.example.runningapp.ui.viewmodels.SharedViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_tracking.*
 import kotlinx.coroutines.Dispatchers.Main
 import timber.log.Timber
 import java.lang.Math.round
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.inject.Inject
 
@@ -41,7 +47,14 @@ const val CANCEL_TRACKING_DIALOG_TAG="CancelDialog"
 
 @AndroidEntryPoint
 class TrackingFragment:Fragment(R.layout.fragment_tracking) {
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
+    lateinit var movement: String
+
     private val viewModel: MainViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     private var isTracking=false
     private var pathPoints= mutableListOf<Polyline>()
@@ -61,8 +74,10 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
 
     private var menu: Menu? = null
 
-    val Fragment.packageManager get() = activity?.packageManager
+    var goalDistance: Int=0
+    var goalTime: Long=0L
 
+    val Fragment.packageManager get() = activity?.packageManager
 
     @set:Inject
     var weight=80f
@@ -102,9 +117,11 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             addAllPolylines()
         }
 
+        movement = sharedPreferences.getString(Constants.KEY_MOVEMENT, "Futás")!!
+
         subscribeToObservers()
 
-        spotify.setOnClickListener {
+        startMusicApp.setOnClickListener {
             var intent=Intent(getActivity(), Main::class.java)
             val launchIntent = packageManager?.getLaunchIntentForPackage("com.spotify.music")
             if (launchIntent != null) {
@@ -112,6 +129,17 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             } else {
 
             }
+        }
+
+        setGoal.setOnClickListener {
+            findNavController().navigate(R.id.action_trackingFragment_to_setGoalFragment,)
+        }
+
+        if(sharedViewModel.goalDistance.value!=null) {
+            goalDistance = sharedViewModel.goalDistance.value!!
+        }
+        if(sharedViewModel.goalTime.value!=null){
+            goalTime=sharedViewModel.goalTime.value!!
         }
 
     }
@@ -125,23 +153,55 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             pathPoints=it
             addLatestPolyline()
             moveCameraToUser()
+
         })
 
         TrackingService.timeRunInMillisec.observe(viewLifecycleOwner, Observer {
             currentTimeMillisec=it
-            val formattedTime=TrackingUtility.getFormattedStopWatchTime(currentTimeMillisec, true)
-            tvTimer.text=formattedTime
+
+            val formattedTime =
+                TrackingUtility.getFormattedStopWatchTime(currentTimeMillisec, true)
+            if(goalTime!=null && goalTime!=0L) {
+
+                val timeBack=TrackingUtility.getFormattedStopWatchTime((goalTime-currentTimeMillisec), true)
+                tvTimer.text = timeBack
+
+            }
+            else{
+                tvTimer.text = formattedTime
+            }
+        })
+
+        TrackingService.updater.observe(viewLifecycleOwner, Observer {
+            if((goalTime-currentTimeMillisec)<=0)
+            {
+                this.endRunAndSaveToDatabase()
+            }
         })
 
         TrackingService.liveDistance.observe(viewLifecycleOwner, Observer {
+
             actualDistance=it
-            if(actualDistance<1000) {
-                tvDistance.text = "${actualDistance} m"
+            if(goalDistance!=0) {
+                if ((goalDistance-actualDistance) < 1000) {
+                    tvDistance.text = "Vissza: ${(goalDistance-actualDistance)} m"
+                } else {
+                    val distanceDouble = actualDistance / 1000.0
+                    tvDistance.text = "Vissza: ${(goalDistance-distanceDouble)} Km"
+                }
+
+                if((actualDistance-goalDistance)>=0)
+                {
+                    endRunAndSaveToDatabase()
+                }
             }
-            else
-            {
-                val distanceDouble=actualDistance/1000.0
-                tvDistance.text = "${distanceDouble} Km"
+            else {
+                if (actualDistance < 1000) {
+                    tvDistance.text = "${actualDistance} m"
+                } else {
+                    val distanceDouble = actualDistance / 1000.0
+                    tvDistance.text = "${distanceDouble} Km"
+                }
             }
         })
 
@@ -153,6 +213,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             else{
                 tvActualSpeed.text = "0 Km/h"
             }
+
             stopTrackingIfTheUserStop()
         })
 
@@ -164,6 +225,8 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         TrackingService.minSpeed.observe(viewLifecycleOwner, Observer {
             minSpeed=it
         })
+
+        Timber.d("MillisecEndRunhoz: ${currentTimeMillisec} ---- ${goalTime}")
     }
 
     // Megfelelő action meghívása
@@ -218,21 +281,54 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         stopTimer=0
         tvActualSpeed.text="Okm/h"
         sendCommandToService(ACTION_STOP_SERVICE)
-        findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
+
+        if(goalDistance!=0)
+        {
+            sharedViewModel.setGoalDistance(0)
+            Timber.d("Táv vissza")
+        }
+
+        if(goalTime!=0L)
+        {
+            sharedViewModel.setGoalTime(0L)
+            Timber.d("Idő vissza")
+        }
+
+        Timber.d("Ms: ${currentTimeMillisec}")
+
+        if(sharedViewModel.challenge.value==true) {
+            findNavController().navigate(R.id.action_trackingFragment_to_compareRunsFragment)
+            sharedViewModel.setChallenge(false)
+        }
+        else{
+            Timber.d("Ms: ${R.id.action_trackingFragment_to_runFragment}")
+            findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
+        }
+
     }
 
     // A gomb szövegének beállítása
     private fun updateTracking(isTracking:Boolean){
         this.isTracking=isTracking
         if (!isTracking && currentTimeMillisec>0L){
-            btnToggleRun.text="Start"
+            btnToggleRun.text=""
+            btnToggleRun.setIconResource(R.drawable.ic_play)
+            btnToggleRun.iconTint= ColorStateList.valueOf(Color.BLACK)
+            val scale = resources.displayMetrics.density
+            btnToggleRun.iconGravity=MaterialButton.ICON_GRAVITY_TEXT_START
+            btnToggleRun.iconPadding=0
             btnFinishRun.visibility=View.VISIBLE
             stopTimer=0
         }
         else if(isTracking){
-            btnToggleRun.text="Stop"
+            btnToggleRun.text=""
+            btnToggleRun.setIconResource(R.drawable.ic_pause)
+            btnToggleRun.iconTint= ColorStateList.valueOf(Color.BLACK)
+            btnToggleRun.iconGravity=MaterialButton.ICON_GRAVITY_TEXT_START
+            btnToggleRun.iconPadding=0
             menu?.getItem(0)?.isVisible=true
             btnFinishRun.visibility=View.GONE
+            setGoal.visibility=View.GONE
             stopTimer=0
         }
     }
@@ -279,17 +375,75 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             val avgSpeed=round((distanceInMeters/1000f)/(currentTimeMillisec/1000f/60/60)*10)/ 10f
             val dateTimestamp=Calendar.getInstance().timeInMillis
             //val dateTimestamp=java.sql.Timestamp(System.currentTimeMillis())
-            val caloriesBurned=((distanceInMeters/1000f)*weight).toInt()
 
+
+            //MET: https://www.topendsports.com/weight-loss/energy-met.htm
+            //val caloriesBurned=((distanceInMeters/1000f)*weight).toInt()
+            var MET=1.3f
+
+            when (movement){
+                "Futás"->{
+                    if(avgSpeed<=6)
+                    {
+                        MET=5.0f
+                    }
+                    else if(avgSpeed>6 && avgSpeed<=10){
+                        MET=10.0f
+                    }
+                    else if (avgSpeed>10 && avgSpeed<=13){
+                        MET=13.5f
+                    }
+                    else{
+                        MET=16.0f
+                    }
+                }
+                "Gyaloglás"->{
+                    if(avgSpeed<=2){
+                        MET=2.0f
+                    }
+                    else if (avgSpeed>2 && avgSpeed<=4){
+                        MET=3.0f
+                    }
+                    else if (avgSpeed>4 && avgSpeed<=6){
+                        MET=4.0f
+                    }
+                    else{
+                        MET=5.0f
+                    }
+                }
+                "Kerékpározás"->{
+                    if(avgSpeed<=16){
+                        MET=4.0f
+                    }
+                    else if (avgSpeed>16 && avgSpeed<=25){
+                        MET=7.0f
+                    }
+                    else{
+                        MET=10.0f
+                    }
+                }
+            }
+
+            //https://www.verywellfit.com/how-many-calories-you-burn-during-exercise-4111064
+            Timber.d("${MET}")
+            val caloriesBurnedFloat= (currentTimeMillisec/60000.0f)*(MET*3.5f*weight)/200.0f
+
+            val caloriesBurned=caloriesBurnedFloat.toInt()
 
             val run=Run(bmp, dateTimestamp, avgSpeed, distanceInMeters, currentTimeMillisec, caloriesBurned, maxSpeed, minSpeed)
 
+            Timber.d("${avgSpeed} + ${currentTimeMillisec} + ${caloriesBurned}")
             viewModel.insertRun(run)
             Snackbar.make(
                 requireActivity().findViewById(R.id.rootView),
                 "A futás mentése sikeres",
                 Snackbar.LENGTH_LONG
             ).show()
+
+            if(sharedViewModel.challenge.value==true) {
+                sharedViewModel.setNewRun(run)
+            }
+
             stopRun()
         }
     }
@@ -297,15 +451,42 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
     // Ez rajzolja ki az összes helyzetet, az egész útvonalunkat
     private fun addAllPolylines(){
         for (polyline in pathPoints){
-            if(actualSpeed<=5){
-                lineColor = Color.RED
-            }
-            else if (actualSpeed>5 && actualSpeed<=15){
-                lineColor=Color.YELLOW
-            }
-            else{
-                lineColor=Color.GREEN
-            }
+            /*when (movement){
+                "Futás"->{
+                    if(actualSpeed<=5){
+                        lineColor = Color.RED
+                    }
+                    else if (actualSpeed>5 && actualSpeed<=15){
+                        lineColor=Color.YELLOW
+                    }
+                    else{
+                        lineColor=Color.GREEN
+                    }
+                }
+                "Gyaloglás"->{
+                    if(actualSpeed<=2){
+                        lineColor = Color.RED
+                    }
+                    else if (actualSpeed>2 && actualSpeed<=6){
+                        lineColor=Color.YELLOW
+                    }
+                    else{
+                        lineColor=Color.GREEN
+                    }
+                }
+                "Kerékpározás"->{
+                    if(actualSpeed<=15){
+                        lineColor = Color.RED
+                    }
+                    else if (actualSpeed>15 && actualSpeed<=25){
+                        lineColor=Color.YELLOW
+                    }
+                    else{
+                        lineColor=Color.GREEN
+                    }
+                }
+            }*/
+
             val polylineOptions=PolylineOptions()
                 .color(lineColor)
                 .width(POLYLINE_WIDTH)
@@ -320,14 +501,40 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         if (pathPoints.isNotEmpty() && pathPoints.last().size > 1){
             val preLastLatLng=pathPoints.last()[pathPoints.last().size-2]
             val lastLatLng=pathPoints.last().last()
-            if(actualSpeed<=5){
-                lineColor = Color.RED
-            }
-            else if (actualSpeed>5 && actualSpeed<=15){
-                lineColor=Color.YELLOW
-            }
-            else{
-                lineColor=Color.GREEN
+            when (movement){
+                "Futás"->{
+                    if(actualSpeed<=5){
+                        lineColor = Color.RED
+                    }
+                    else if (actualSpeed>5 && actualSpeed<=15){
+                        lineColor=Color.YELLOW
+                    }
+                    else{
+                        lineColor=Color.GREEN
+                    }
+                }
+                "Gyaloglás"->{
+                    if(actualSpeed<=2){
+                        lineColor = Color.RED
+                    }
+                    else if (actualSpeed>2 && actualSpeed<=6){
+                        lineColor=Color.YELLOW
+                    }
+                    else{
+                        lineColor=Color.GREEN
+                    }
+                }
+                "Kerékpározás"->{
+                    if(actualSpeed<=15){
+                        lineColor = Color.RED
+                    }
+                    else if (actualSpeed>15 && actualSpeed<=25){
+                        lineColor=Color.YELLOW
+                    }
+                    else{
+                        lineColor=Color.GREEN
+                    }
+                }
             }
 
             val polylineOptions=PolylineOptions()
