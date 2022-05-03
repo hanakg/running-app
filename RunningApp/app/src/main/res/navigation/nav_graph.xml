@@ -39,6 +39,12 @@
         <action
             android:id="@+id/action_trackingFragment_to_runFragment"
             app:destination="@id/runFragment" />
+        <action
+            android:id="@+id/action_trackingFragment_to_compareRunsFragment"
+            app:destination="@id/compareRunsFragment" />
+        <action
+            android:id="@+id/action_trackingFragment_to_setGoalFragment"
+            app:destination="@id/setGoalFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingsFragment"
@@ -57,4 +63,16 @@
     </fragment>
     <action android:id="@+id/action_global_OneRunStatisticsFragment"
         app:destination="@+id/oneRunStatisticsFragment"/>
+    <fragment
+        android:id="@+id/compareRunsFragment"
+        android:name="com.example.runningapp.ui.fragments.CompareRunsFragment"
+        android:label="CompareRunsFragment" />
+    <fragment
+        android:id="@+id/setGoalFragment"
+        android:name="com.example.runningapp.ui.fragments.SetGoalFragment"
+        android:label="SetGoalFragment" >
+        <action
+            android:id="@+id/action_setGoalFragment_to_trackingFragment"
+            app:destination="@id/trackingFragment" />
+    </fragment>
 </navigation>
