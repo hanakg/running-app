@@ -53,6 +53,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
 
     lateinit var movement: String
 
+
     private val viewModel: MainViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
@@ -76,6 +77,48 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
 
     var goalDistance: Int=0
     var goalTime: Long=0L
+
+    var walkGetter: Int=Color.RED
+        get() {
+            if(actualSpeed<=2){
+                return Color.RED
+            }
+            else if (actualSpeed>2 && actualSpeed<=6){
+                return Color.YELLOW
+            }
+            else{
+                return Color.GREEN
+            }
+        }
+
+    var runGetter: Int=Color.RED
+        get() {
+            if(actualSpeed<=5){
+                //Timber.d("Run getter piros meghívódott")
+                return Color.RED
+            }
+            else if (actualSpeed>5 && actualSpeed<=15){
+                //Timber.d("Run getter meghívódott")
+                return  Color.YELLOW
+            }
+            else{
+                //Timber.d("Run getter zöld meghívódott")
+                return Color.GREEN
+            }
+        }
+
+    var cycleGetter: Int=Color.RED
+    get() {
+        if(actualSpeed<=15){
+            return Color.RED
+        }
+        else if (actualSpeed>15 && actualSpeed<=25){
+            return Color.YELLOW
+        }
+        else{
+            return Color.GREEN
+        }
+    }
 
     val Fragment.packageManager get() = activity?.packageManager
 
@@ -142,6 +185,19 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             goalTime=sharedViewModel.goalTime.value!!
         }
 
+        when (movement){
+            "Futás"->{
+                Timber.d("Beállítva")
+                lineColor=runGetter
+            }
+            "Gyaloglás"->{
+                lineColor=walkGetter
+            }
+            "Kerékpározás"->{
+                lineColor=cycleGetter
+            }
+        }
+
     }
 
     private fun subscribeToObservers(){
@@ -161,7 +217,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
 
             val formattedTime =
                 TrackingUtility.getFormattedStopWatchTime(currentTimeMillisec, true)
-            if(goalTime!=null && goalTime!=0L) {
+            if(goalTime!=0L) {
 
                 val timeBack=TrackingUtility.getFormattedStopWatchTime((goalTime-currentTimeMillisec), true)
                 tvTimer.text = timeBack
@@ -173,7 +229,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         })
 
         TrackingService.updater.observe(viewLifecycleOwner, Observer {
-            if((goalTime-currentTimeMillisec)<=0)
+            if(goalTime!=0L &&(goalTime-currentTimeMillisec)<=0)
             {
                 this.endRunAndSaveToDatabase()
             }
@@ -226,7 +282,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             minSpeed=it
         })
 
-        Timber.d("MillisecEndRunhoz: ${currentTimeMillisec} ---- ${goalTime}")
+        //Timber.d("MillisecEndRunhoz: ${currentTimeMillisec} ---- ${goalTime}")
     }
 
     // Megfelelő action meghívása
@@ -302,6 +358,8 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         }
         else{
             Timber.d("Ms: ${R.id.action_trackingFragment_to_runFragment}")
+            //findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
+            //activity?.recreate()
             findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
         }
 
@@ -501,7 +559,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         if (pathPoints.isNotEmpty() && pathPoints.last().size > 1){
             val preLastLatLng=pathPoints.last()[pathPoints.last().size-2]
             val lastLatLng=pathPoints.last().last()
-            when (movement){
+            /*when (movement){
                 "Futás"->{
                     if(actualSpeed<=5){
                         lineColor = Color.RED
@@ -535,6 +593,19 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
                         lineColor=Color.GREEN
                     }
                 }
+            }*/
+
+            when (movement){
+                "Futás"->{
+                    //Timber.d("Beállítva")
+                    lineColor=runGetter
+                }
+                "Gyaloglás"->{
+                    lineColor=walkGetter
+                }
+                "Kerékpározás"->{
+                    lineColor=cycleGetter
+                }
             }
 
             val polylineOptions=PolylineOptions()
@@ -562,7 +633,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         if (stopTimer==10L){
             sendCommandToService(ACTION_PAUSE_SERVICE)
         }
-        Timber.d("Ido: ${stopTimer}")
+        //Timber.d("Ido: ${stopTimer}")
     }
 
     //Térkép nézet folytatás, elindítás, leállítás, megállítás, mi történjen, ha kevés a memória
