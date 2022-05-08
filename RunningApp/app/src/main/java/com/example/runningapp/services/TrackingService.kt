@@ -8,12 +8,15 @@ import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.getIntent
 import android.location.Location
 import android.location.LocationListener
 import android.os.Build
 import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -29,6 +32,7 @@ import com.example.runningapp.other.Constants.NOTIFICATION_ID
 import com.example.runningapp.other.Constants.TIMER_UPDATE_INTERVAL
 import com.example.runningapp.other.TrackingUtility
 import com.example.runningapp.ui.MainActivity
+import com.example.runningapp.ui.viewmodels.SharedViewModel
 import com.google.android.gms.location.*
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.maps.model.LatLng
@@ -36,25 +40,21 @@ import com.google.maps.android.SphericalUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.roundToInt
+import kotlin.properties.Delegates
 
 typealias Polyline=MutableList<LatLng>
 typealias Polylines=MutableList<Polyline>
 
 @AndroidEntryPoint
 class TrackingService:LifecycleService() {
-
     var isFirstRun=true
     var serviceKilled=false
-
-    private var _highSpeed=0.0
-    private var _minSpeed=Double.MAX_VALUE
-
-    private var distance=0
 
     //lateinit var mLocation: Location // location
     private val _locations = mutableListOf<LatLng>()
@@ -71,6 +71,7 @@ class TrackingService:LifecycleService() {
     lateinit var curNotificationBuilder: NotificationCompat.Builder
 
     companion object{
+
         val timeRunInMillisec=MutableLiveData<Long>()
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<Polylines>()
@@ -103,14 +104,28 @@ class TrackingService:LifecycleService() {
             updateLocationTracking(it)
             updateNotificationTrackingState(it)
         })
+        //distance=0
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        //System.exit(0)
+        Timber.d("Destroooooy")
+    }
+
+    override fun getLifecycle(): Lifecycle {
+        return super.getLifecycle()
+        Timber.d("Lifecycle: ${this.lifecycle}")
     }
 
     // Rögzítés megállítása mentés nélkül
     private fun killService(){
         serviceKilled=true
         isFirstRun=true
+        //distance=null
         pauseService()
         postInitialValues()
+        //onDestroy()
         stopForeground(true)
         stopSelf()
     }
@@ -123,6 +138,7 @@ class TrackingService:LifecycleService() {
                     if (isFirstRun){
                         startForegroundService()
                         isFirstRun=false
+                        distance=0
                     }
                     else{
                         Timber.d("Resuming szolgáltatás...")
@@ -227,53 +243,68 @@ class TrackingService:LifecycleService() {
             }
         }
     }
+    private var _highSpeed=0.0
+    private var _minSpeed=Double.MAX_VALUE
 
+    var distance= 0
     // Amíg fut a rögzítés addig újra és újra új koordinátákat ad hozzá a koordináta listához
     val locationCallback=object :LocationCallback(){
         override fun onLocationResult(result: LocationResult?) {
             super.onLocationResult(result)
-            if (isTracking.value!!){
-                val currentLocation = result!!.lastLocation
-                val latLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+            if (lifecycle.currentState == Lifecycle.State.STARTED) {
+                if (isTracking.value!!) {
+                    val currentLocation = result!!.lastLocation
+                    val latLng = LatLng(currentLocation.latitude, currentLocation.longitude)
 
-                val lastLocation = _locations.lastOrNull()
+                    val lastLocation = _locations.lastOrNull()
 
-                if (lastLocation != null) {
-                    distance += SphericalUtil.computeDistanceBetween(lastLocation, latLng).roundToInt()
-                    liveDistance.value = distance
-                }
-
-                updater.postValue(1)
-
-                result?.locations?.let { locations->
-                    for (location in locations){
-
-                        addPathPoint(location)
-
-                        Timber.d("Új distance: ${distance}")
-                        //liveDistance.value=distance
-                        //Teszt
-                        Timber.d("Új helyzet: ${location.latitude}, ${location.latitude}")
-                        //onLocationChanged(location)
-                        val speed :Double = ((location.speed * 3.6 )*100.0).roundToInt()/100.0
-
-                        if(speed>_highSpeed)
-                        {
-                            _highSpeed=speed
-                            highSpeed.postValue(_highSpeed)
+                    if (lastLocation != null) {
+                        //liveDistance.value = liveDistance.value!! + SphericalUtil.computeDistanceBetween(lastLocation, latLng).roundToInt()
+                        if (distance != null) {
+                            distance = distance!! + SphericalUtil.computeDistanceBetween(
+                                lastLocation,
+                                latLng
+                            )
+                                .roundToInt()
+                            liveDistance.value = distance
+                            lifecycle.currentState
+                            Timber.d("Új distance: ${distance}")
+                            Timber.d("asdLifecycle: ${lifecycle}---------${lifecycle.currentState}")
                         }
+                    }
 
-                        if(speed<_minSpeed)
-                        {
-                            _minSpeed=speed
-                            minSpeed.postValue(_minSpeed)
+                    updater.postValue(1)
+
+                    result?.locations?.let { locations ->
+                        for (location in locations) {
+
+                            addPathPoint(location)
+
+
+                            Timber.d("Új time: ${timeRunInMillisec.value!!}")
+                            //liveDistance.value=distance
+                            //Teszt
+                            //Timber.d("Új helyzet: ${location.latitude}, ${location.latitude}")
+                            //onLocationChanged(location)
+                            val speed: Double =
+                                ((location.speed * 3.6) * 100.0).roundToInt() / 100.0
+
+                            if (speed > _highSpeed) {
+                                _highSpeed = speed
+                                highSpeed.postValue(_highSpeed)
+                            }
+
+                            if (speed < _minSpeed) {
+                                _minSpeed = speed
+                                minSpeed.postValue(_minSpeed)
+                            }
+
+                            //Timber.d("Új high speed: ${highSpeed}")
+
+                            actualSpeed.postValue(speed)
+                            //Timber.d("Sebesség: ${speed}")
+                            //setSpeed(location)
                         }
-
-                        Timber.d("Új high speed: ${highSpeed}")
-
-                        actualSpeed.postValue(speed)
-                        Timber.d("Sebesség: ${speed}")
-                        //setSpeed(location)
                     }
                 }
             }
@@ -312,10 +343,12 @@ class TrackingService:LifecycleService() {
         startForeground(NOTIFICATION_ID, baseNotificationBuilder.build())
 
         timeRunInSeconds.observe(this, Observer {
-            if (!serviceKilled){
-                val notification=curNotificationBuilder
-                    .setContentText(TrackingUtility.getFormattedStopWatchTime(it*1000L))
-                notificationManager.notify(NOTIFICATION_ID, notification.build())
+            if(isTracking.value!!) {
+                if (!serviceKilled) {
+                    val notification = curNotificationBuilder
+                        .setContentText(TrackingUtility.getFormattedStopWatchTime(it * 1000L))
+                    notificationManager.notify(NOTIFICATION_ID, notification.build())
+                }
             }
         })
     }
