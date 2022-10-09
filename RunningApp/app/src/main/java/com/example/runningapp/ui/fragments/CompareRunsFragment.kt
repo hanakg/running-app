@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.fragment_onerunstatistics.*
 import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class CompareRunsFragment: Fragment(R.layout.fragment_compareruns) {
