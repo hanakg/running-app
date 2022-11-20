@@ -14,7 +14,10 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.navigation.fragment.findNavController
 import com.example.runningapp.R
 import com.example.runningapp.db.Run
@@ -68,6 +71,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
     private var lineColor=Color.RED
 
     private var stopTimer=0L
+    private var speedList= mutableListOf<Double>();
 
     private var map: GoogleMap? = null
 
@@ -335,6 +339,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
     private fun stopRun(){
         tvTimer.text="00:00:00:00"
         stopTimer=0
+        speedList.clear()
         tvActualSpeed.text="Okm/h"
         sendCommandToService(ACTION_STOP_SERVICE)
 
@@ -377,6 +382,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             btnToggleRun.iconPadding=0
             btnFinishRun.visibility=View.VISIBLE
             stopTimer=0
+            speedList.clear()
         }
         else if(isTracking){
             btnToggleRun.text=""
@@ -388,6 +394,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
             btnFinishRun.visibility=View.GONE
             setGoal.visibility=View.GONE
             stopTimer=0
+            speedList.clear()
         }
     }
 
@@ -545,6 +552,19 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
                 }
             }*/
 
+            when (movement){
+                "Futás"->{
+                    //Timber.d("Beállítva")
+                    lineColor=runGetter
+                }
+                "Gyaloglás"->{
+                    lineColor=walkGetter
+                }
+                "Kerékpározás"->{
+                    lineColor=cycleGetter
+                }
+            }
+
             val polylineOptions=PolylineOptions()
                 .color(lineColor)
                 .width(POLYLINE_WIDTH)
@@ -556,10 +576,11 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
     // Az utolsó helyzet(koordináta) kirajzolása, itt állítjuk be a vonal színét, szélességét...
     // Ez csak az utolsó két helyzetet köti össze, nem rajzolja ki az összes koordinátát
     private fun addLatestPolyline(){
-        if (pathPoints.isNotEmpty() && pathPoints.last().size > 1){
-            val preLastLatLng=pathPoints.last()[pathPoints.last().size-2]
-            val lastLatLng=pathPoints.last().last()
-            /*when (movement){
+
+            if (pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
+                val preLastLatLng = pathPoints.last()[pathPoints.last().size - 2]
+                val lastLatLng = pathPoints.last().last()
+                /*when (movement){
                 "Futás"->{
                     if(actualSpeed<=5){
                         lineColor = Color.RED
@@ -595,26 +616,27 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
                 }
             }*/
 
-            when (movement){
-                "Futás"->{
-                    //Timber.d("Beállítva")
-                    lineColor=runGetter
+                when (movement) {
+                    "Futás" -> {
+                        //Timber.d("Beállítva")
+                        lineColor = runGetter
+                    }
+                    "Gyaloglás" -> {
+                        lineColor = walkGetter
+                    }
+                    "Kerékpározás" -> {
+                        lineColor = cycleGetter
+                    }
                 }
-                "Gyaloglás"->{
-                    lineColor=walkGetter
-                }
-                "Kerékpározás"->{
-                    lineColor=cycleGetter
-                }
-            }
 
-            val polylineOptions=PolylineOptions()
-                .color(lineColor)
-                .width(POLYLINE_WIDTH)
-                .add(preLastLatLng)
-                .add(lastLatLng)
-            map?.addPolyline(polylineOptions)
-        }
+                val polylineOptions = PolylineOptions()
+                    .color(lineColor)
+                    .width(POLYLINE_WIDTH)
+                    .add(preLastLatLng)
+                    .add(lastLatLng)
+                map?.addPolyline(polylineOptions)
+                Timber.d("Map kirajzolas")
+            }
     }
 
     // Parancs küldése a servicenek
@@ -625,7 +647,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         }
 
     private fun stopTrackingIfTheUserStop(){
-        if(actualSpeed<1.0){
+        /*if(actualSpeed<1.0){
             stopTimer=stopTimer+1
         }
 
@@ -633,33 +655,66 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
         if (stopTimer==10L){
             sendCommandToService(ACTION_PAUSE_SERVICE)
         }
-        //Timber.d("Ido: ${stopTimer}")
+        Timber.d("Ido: ${stopTimer}")*/
+
+        if (stopTimer<10)
+        {
+            speedList.add(actualSpeed)
+            stopTimer=stopTimer+1
+
+            Timber.d("Ido: ${stopTimer}")
+            Timber.d("Sebesseg: ${actualSpeed}")
+            Timber.d("Atlag: ${speedList.sum()/speedList.size}")
+            Timber.d("Size: ${speedList.size}")
+        }
+        else {
+            if (speedList.sum() / speedList.size <= 1.5) {
+                sendCommandToService(ACTION_PAUSE_SERVICE)
+            }
+            else
+            {
+                speedList.removeAt(0)
+                speedList.add(actualSpeed)
+
+                stopTimer=stopTimer+1
+
+                Timber.d("Ido: ${stopTimer}")
+
+                Timber.d("Sebesseg: ${actualSpeed}")
+                Timber.d("Atlag: ${speedList.sum()/speedList.size}")
+            }
+        }
+
     }
 
     //Térkép nézet folytatás, elindítás, leállítás, megállítás, mi történjen, ha kevés a memória
     //Térkép életciklus
     override fun onResume() {
         super.onResume()
-        stopTimer=0
+        //stopTimer=0
+        //speedList.clear()
         mapView?.onResume()
     }
 
     override fun onStart() {
         super.onStart()
-        stopTimer=0
+        //stopTimer=0
+        //speedList.clear()
         mapView?.onStart()
     }
 
     override fun onStop() {
         super.onStop()
-        stopTimer=0
+        //stopTimer=0
+        //speedList.clear()
         tvActualSpeed.text="O Km/h"
         mapView?.onStop()
     }
 
     override fun onPause() {
         super.onPause()
-        stopTimer=0
+        //stopTimer=0
+        //speedList.clear()
         tvActualSpeed.text="O Km/h"
         mapView?.onPause()
     }
