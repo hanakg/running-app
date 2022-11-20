@@ -85,7 +85,7 @@ class SetupFragment:Fragment(R.layout.fragment_setup) {
         }
     }
 
-    // A felhasználó nevének és súlyának beállítása
+    // A felhasználó nevének és súlyának, illetve a mozgásformának a beállítása
     private fun writePersonalDataToSharedPref():Boolean{
         val name=etName.text.toString()
         val weight=etWeight.text.toString()
@@ -103,8 +103,8 @@ class SetupFragment:Fragment(R.layout.fragment_setup) {
             .putBoolean(KEY_FIRST_TIME_TOGGLE, false)
             .apply()
 
-        val toolbarText="Hello, $name!"
-        requireActivity().tvToolbarTitle.text=toolbarText
+        /*val toolbarText="Hello, $name!"
+        requireActivity().tvToolbarTitle.text=toolbarText*/
         return true
     }
 }
