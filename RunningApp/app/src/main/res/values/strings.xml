@@ -13,4 +13,18 @@
         <item>Kerékpározás</item>
     </string-array>
     <string name="google_maps_key">GOOGLE_MAPS_API_KEY</string>
+    <string-array name="month_names">
+        <item>Január</item>
+        <item>Február</item>
+        <item>Március</item>
+        <item>Április</item>
+        <item>Május</item>
+        <item>Június</item>
+        <item>Július</item>
+        <item>Augusztus</item>
+        <item>Szeptember</item>
+        <item>Október</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
 </resources>
