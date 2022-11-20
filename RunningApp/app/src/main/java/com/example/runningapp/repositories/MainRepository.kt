@@ -22,5 +22,10 @@ class MainRepository @Inject constructor(
     fun getTotalMaxSpeed()=runDao.getTotalMaxSpeed()
     fun getTotalMinSpeed()=runDao.getTotalMinSpeed()
     fun getRunsCountByYear()=runDao.getRunsCountByYear()
+    fun getDistanceSumByYear()=runDao.getDistanceSumByYear()
+    fun getDistanceSumByMonth(actualMonth: Int, actualYear: Int)=runDao.getDistanceSumByActualMonth(actualMonth, actualYear)
+    fun getDistanceSumLastThreeMonths(actualTimestamp: Long)=runDao.getSumDistanceLastThreeMonths(/*actualTimestamp*/)
+    fun getLastRunTimeStamp()=runDao.getLastRunTimeStamp()
+
     fun getTimeStampt()=runDao.getTimeStampt()
 }

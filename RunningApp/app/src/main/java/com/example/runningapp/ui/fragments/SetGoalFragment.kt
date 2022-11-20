@@ -48,7 +48,7 @@ class SetGoalFragment: Fragment(R.layout.fragment_setgoal){
         val hours=etHour.text.toString()
         val minutes=etMinute.text.toString()
 
-        if (hours.isEmpty() || minutes.isEmpty() || minutes.toInt()>=60 || hours.toInt()>24){
+        if (hours.isEmpty() || minutes.isEmpty() || minutes.toInt()>=60 || hours.toInt()>24 || minutes.toInt()<0 || hours.toInt()<0 || (hours.toInt()==0 && minutes.toInt()==0)){
             return false
         }
 
@@ -67,7 +67,7 @@ class SetGoalFragment: Fragment(R.layout.fragment_setgoal){
     private fun writeDistanceGoalToSharedViewModel():Boolean{
         val distance=etDistance.text.toString()
 
-        if (distance.isEmpty() || distance.toInt()>500000){
+        if (distance.isEmpty() || distance.toInt()>100000 || distance.toInt()<=0){
             return false
         }
 

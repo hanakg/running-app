@@ -47,7 +47,7 @@ object ServiceModule {
         .setAutoCancel(false)
         .setOngoing(true)
         .setSmallIcon(R.drawable.ic_run)
-        .setContentTitle("Running App")
+        .setContentTitle("Futóedzés menedzser")
         .setContentText("00:00:00")
         .setContentIntent(pendingIntent)
 }
