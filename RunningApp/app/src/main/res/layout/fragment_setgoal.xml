@@ -20,7 +20,7 @@
             android:ems="10"
             android:hint="Távolság"
             android:gravity="center_horizontal"
-            android:inputType="numberDecimal" />
+            android:inputType="number" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -52,7 +52,7 @@
             android:ems="10"
             android:hint="Óra"
             android:gravity="center_horizontal"
-            android:inputType="numberDecimal" />
+            android:inputType="number" />
 
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
@@ -70,7 +70,7 @@
             android:ems="10"
             android:hint="Perc"
             android:gravity="center_horizontal"
-            android:inputType="numberDecimal" />
+            android:inputType="number" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
