@@ -141,7 +141,7 @@ class CompareRunsFragment: Fragment(R.layout.fragment_compareruns) {
             tvNewAvgSpeedInfo.setTextColor(Color.RED)
 
             tvOldAvgSpeedInfo.text="Rontottál"
-            tvNewAvgSpeedInfo.text="${(oldAvgSpeed-newAvgSpeed).toString()+"km/h-val"} lassabb"
+            tvNewAvgSpeedInfo.text="${(Math.round((oldAvgSpeed-newAvgSpeed)*1000.0)/1000.0).toString()+"km/h-val"} lassabb"
         }
         else if(oldAvgSpeed<newAvgSpeed){
             tvOldAvgSpeed.setTextColor(Color.RED)
@@ -151,7 +151,7 @@ class CompareRunsFragment: Fragment(R.layout.fragment_compareruns) {
             tvNewAvgSpeedInfo.setTextColor(Color.GREEN)
 
             tvOldAvgSpeedInfo.text="Javítottál"
-            tvNewAvgSpeedInfo.text="${(newAvgSpeed-oldAvgSpeed).toString()+"km/h-val"} gyorsabb"
+            tvNewAvgSpeedInfo.text="${(Math.round((newAvgSpeed-oldAvgSpeed)*1000.0)/1000.0).toString()+"km/h-val"} gyorsabb"
         }
         else{
             tvOldAvgSpeed.setTextColor(Color.YELLOW)
@@ -172,7 +172,7 @@ class CompareRunsFragment: Fragment(R.layout.fragment_compareruns) {
         tvOldMaxSpeed.text=oldMaxSpeed.toString()+"km/h"
         tvNewMaxSpeed.text=newMaxSpeed.toString()+"km/h"
 
-        if(oldMaxSpeed>newAvgSpeed) {
+        if(oldMaxSpeed>newMaxSpeed) {
             tvOldMaxSpeed.setTextColor(Color.GREEN)
             tvNewMaxSpeed.setTextColor(Color.RED)
 
@@ -182,7 +182,7 @@ class CompareRunsFragment: Fragment(R.layout.fragment_compareruns) {
             tvOldMaxSpeedInfo.text="Rontottál"
             tvNewMaxSpeedInfo.text="${(oldMaxSpeed-newMaxSpeed).toString()+"km/h-val"} lassabb"
         }
-        else if(oldMaxSpeed<newAvgSpeed){
+        else if(oldMaxSpeed<newMaxSpeed){
             tvOldMaxSpeed.setTextColor(Color.RED)
             tvNewMaxSpeed.setTextColor(Color.GREEN)
 
@@ -193,7 +193,7 @@ class CompareRunsFragment: Fragment(R.layout.fragment_compareruns) {
             tvNewMaxSpeedInfo.text="${(newMaxSpeed-oldMaxSpeed).toString()+"km/h-val"} gyorsabb"
         }
         else{
-            tvOldAvgSpeed.setTextColor(Color.YELLOW)
+            tvOldMaxSpeed.setTextColor(Color.YELLOW)
             tvNewMaxSpeed.setTextColor(Color.YELLOW)
 
             tvOldMaxSpeedInfo.setTextColor(Color.YELLOW)
