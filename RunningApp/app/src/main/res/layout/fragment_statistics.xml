@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -131,14 +134,13 @@
         app:layout_constraintBottom_toTopOf="@+id/tvMaxSpeedInfo"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="parent" />
-//
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.59" />
+        app:layout_constraintGuide_begin="288dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
@@ -147,4 +149,102 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
 
+//-------------------------------------------------------------------------
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvLastRun"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Utolsó futás időpontja: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guideline"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvDistanceSumByMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Megtett távolság az aktuális hónapban"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvLastRun"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/listRunsCountByYear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Futások mennyisége évenként:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDistanceSumByMonth"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="\tdarab"
+        android:textSize="10dp"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listRunsCountByYear"
+        />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChartRunsCountByYear"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/listRunsCountByYear"
+ />
+
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/listDistanceSumByYear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Megtett távolságok évenként:"
+        android:layout_marginTop="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barChartRunsCountByYear"
+        />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/km"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="\tkm"
+        android:textSize="10dp"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listDistanceSumByYear"
+        />
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChartRunsSumByYear"
+        android:layout_width="match_parent"
+        android:layout_marginTop="0dp"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toBottomOf="@+id/listDistanceSumByYear" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tvLastThreeMonthsDistance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AZ utolsó három hónapban megtett távolságok:"
+        android:layout_marginTop="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barChartRunsSumByYear"
+        />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/lineChartLastThreeMonths"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvLastThreeMonthsDistance"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
