@@ -32,6 +32,8 @@ class StatisticsViewModel @Inject constructor(
 
     val lastRunTimeStamp=mainRepository.getLastRunTimeStamp()
 
+    val avgDistance=mainRepository.getAvgDistance()
+
     val getTimeStampt=mainRepository.getTimeStampt()
 
     val runsSortedByDate=mainRepository.getAllRunsByDate()
