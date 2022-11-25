@@ -14,6 +14,7 @@
     </string-array>
     <string name="google_maps_key">GOOGLE_MAPS_API_KEY</string>
     <string-array name="month_names">
+        <item>Hónap</item>
         <item>Január</item>
         <item>Február</item>
         <item>Március</item>
