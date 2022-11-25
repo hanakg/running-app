@@ -211,6 +211,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
 
         TrackingService.pathPoints.observe(viewLifecycleOwner, Observer {
             pathPoints=it
+            Timber.d("PathPoint fut")
             addLatestPolyline()
             moveCameraToUser()
 

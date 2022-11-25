@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -20,6 +26,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Dátum"
+        android:textSize="20dp"
+        android:drawableLeft="@drawable/ic_calendar"
+        android:drawableTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/tvTime"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,6 +40,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Idő"
+        android:textSize="20dp"
+        android:drawableLeft="@drawable/ic_time"
+        android:drawableTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/tvDistance"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/tvDate" />
@@ -41,6 +53,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Távolság"
+        android:textSize="20dp"
+        android:drawableLeft="@drawable/ic_distance"
+        app:tint="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/tvAvgSpeed"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/tvTime" />
@@ -51,6 +66,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Átlag sebesség"
+        android:textSize="20dp"
+        android:drawableLeft="@drawable/ic_run"
+        android:drawableTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/tvCalories"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/tvDistance" />
@@ -61,6 +79,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Elégetett kalóriák"
+        android:textSize="20dp"
+        android:drawableLeft="@drawable/ic_burned_calories"
+        android:drawableTint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/tvMaxSpeed"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/tvAvgSpeed" />
@@ -71,6 +92,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Maximum sebesség"
+        android:textSize="20dp"
+        android:drawableLeft="@drawable/ic_rabbit"
+        app:tint="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintBottom_toTopOf="@+id/tvMinSpeed" />
@@ -81,9 +105,20 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Minimum sebesség"
+        android:textSize="20dp"
+        android:drawableLeft="@drawable/ic_snail"
+        app:tint="@android:color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintBottom_toTopOf="@+id/tvMaxSpeed" />
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvMinSpeed"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/challengestarttrack"
@@ -95,7 +130,9 @@
         app:rippleColor="@android:color/white"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
+        app:layout_constraintTop_toBottomOf="@+id/pieChart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="@android:color/black" />
 </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

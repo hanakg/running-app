@@ -74,6 +74,9 @@ interface RunDao {
     @Query("SELECT timestamp as value FROM running_table ORDER BY timestamp DESC LIMIT 1")
     fun getLastRunTimeStamp():LiveData<Timestamp>
 
+    @Query("SELECT AVG(distance) FROM running_table")
+    fun getAvgDistance():LiveData<Int>
+
     @Query("SELECT timestamp as value FROM running_table ")
     fun getTimeStampt():LiveData<List<Timestamp>>
     //----------------------------------------------------------------------
