@@ -438,14 +438,17 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
                 distanceInMeters+=TrackingUtility.calculatePolylineLength(polyline).toInt()
             }
 
-            val avgSpeed=round((distanceInMeters/1000f)/(currentTimeMillisec/1000f/60/60)*10)/ 10f
+            //val avgSpeed=round((distanceInMeters/1000f)/(currentTimeMillisec/1000f/60/60)*10)/ 10f
+
+            val avgSpeed=calculateAvgSpeed(distanceInMeters, currentTimeMillisec)
+
             val dateTimestamp=Calendar.getInstance().timeInMillis
             //val dateTimestamp=java.sql.Timestamp(System.currentTimeMillis())
 
 
             //MET: https://www.topendsports.com/weight-loss/energy-met.htm
             //val caloriesBurned=((distanceInMeters/1000f)*weight).toInt()
-            var MET=1.3f
+            /*var MET=1.3f
 
             when (movement){
                 "Futás"->{
@@ -488,13 +491,18 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
                         MET=10.0f
                     }
                 }
-            }
+            }*/
+
+            val MET=calculateMET(movement, avgSpeed)
 
             //https://www.verywellfit.com/how-many-calories-you-burn-during-exercise-4111064
             Timber.d("${MET}")
-            val caloriesBurnedFloat= (currentTimeMillisec/60000.0f)*(MET*3.5f*weight)/200.0f
 
-            val caloriesBurned=caloriesBurnedFloat.toInt()
+            /*val caloriesBurnedFloat= (currentTimeMillisec/60000.0f)*(MET*3.5f*weight)/200.0f
+
+            val caloriesBurned=caloriesBurnedFloat.toInt()*/
+
+            val caloriesBurned=calculateBurnedCalories(currentTimeMillisec, MET, weight)
 
             val run=Run(bmp, dateTimestamp, avgSpeed, distanceInMeters, currentTimeMillisec, caloriesBurned, maxSpeed, minSpeed)
 
@@ -512,6 +520,71 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
 
             stopRun()
         }
+    }
+
+    public fun calculateAvgSpeed(distanceInMeter:Int, durationInMillisec:Long):Float{
+        val avgSpeed=round((distanceInMeter/1000f)/(durationInMillisec/1000f/60/60)*10)/ 10f
+
+        return avgSpeed
+    }
+
+    public fun calculateMET(movementType:String, avgSpeed:Float):Float{
+        //MET: https://www.topendsports.com/weight-loss/energy-met.htm
+
+        var MET=1.3f
+
+        when (movementType){
+            "Futás"->{
+                if(avgSpeed<=6)
+                {
+                    MET=5.0f
+                }
+                else if(avgSpeed>6 && avgSpeed<=10){
+                    MET=10.0f
+                }
+                else if (avgSpeed>10 && avgSpeed<=13){
+                    MET=13.5f
+                }
+                else{
+                    MET=16.0f
+                }
+            }
+            "Gyaloglás"->{
+                if(avgSpeed<=2){
+                    MET=2.0f
+                }
+                else if (avgSpeed>2 && avgSpeed<=4){
+                    MET=3.0f
+                }
+                else if (avgSpeed>4 && avgSpeed<=6){
+                    MET=4.0f
+                }
+                else{
+                    MET=5.0f
+                }
+            }
+            "Kerékpározás"->{
+                if(avgSpeed<=16){
+                    MET=4.0f
+                }
+                else if (avgSpeed>16 && avgSpeed<=25){
+                    MET=7.0f
+                }
+                else{
+                    MET=10.0f
+                }
+            }
+        }
+
+        return MET
+    }
+
+    public fun calculateBurnedCalories(durationInMillisec:Long, MET:Float, weight:Float):Int{
+        val caloriesBurnedFloat= (durationInMillisec/60000.0f)*(MET*3.5f*weight)/200.0f
+
+        val caloriesBurned=caloriesBurnedFloat.toInt()
+
+        return caloriesBurned
     }
 
     // Ez rajzolja ki az összes helyzetet, az egész útvonalunkat
