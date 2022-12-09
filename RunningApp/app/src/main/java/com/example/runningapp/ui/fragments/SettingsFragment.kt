@@ -93,7 +93,7 @@ class SettingsFragment:Fragment(R.layout.fragment_settings) {
             .putString(KEY_MOVEMENT, selectedMovement)
             .apply()
 
-        val toolbarText="Gyerünk, $nameText!"
+        val toolbarText="Futóedzés menedzser"
         requireActivity().tvToolbarTitle.text=toolbarText
         return true
     }

@@ -148,7 +148,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
                         )
                     }
                     val DataSetBarChart =
-                        BarDataSet(allYearCount, "Futások száma az adott évben").apply {
+                        BarDataSet(allYearCount, "Rögzítések száma az adott évben").apply {
                             valueTextColor = Color.WHITE
                             valueTextSize = 10F
                             valueFormatter = DefaultValueFormatter(0)
@@ -193,7 +193,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
                         zeroLineColor = Color.WHITE
                         textColor = Color.WHITE
                         axisMinimum = 0.0f
-                        labelCount = countList.maxOf { x -> x.count }
+                        labelCount = countList.maxOf { x -> x.count }/2
 
                         setDrawAxisLine(true)
                         setDrawGridLines(true)
@@ -602,6 +602,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
                     }
 
                     lineChartLastThreeMonths.extraRightOffset = 30F
+                    lineChartLastThreeMonths.extraLeftOffset = 10F
                     lineChartLastThreeMonths.isClickable = false
                     lineChartLastThreeMonths.setNoDataText("Nincs megjeleníthető adat a diagramhoz")
                     lineChartLastThreeMonths.legend.apply {

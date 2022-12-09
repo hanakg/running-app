@@ -76,7 +76,7 @@
         android:id="@+id/tvRunAvgSpeedInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Átlag sebesség"
+        android:text="Átlagsebesség"
         app:layout_constraintBottom_toTopOf="@+id/tvMinSpeedInfo"
         app:layout_constraintEnd_toEndOf="@+id/tvRunAvgSpeed"
         app:layout_constraintHorizontal_bias="0.5"
@@ -155,7 +155,7 @@
         android:id="@+id/tvLastRun"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Utolsó futás időpontja: "
+        android:text="Utolsó aktivítás időpontja: "
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guideline"
         />
@@ -175,7 +175,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="Futások mennyisége évenként:"
+        android:text="Rögzítések száma évenként:"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDistanceSumByMonth"
         />
