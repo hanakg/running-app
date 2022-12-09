@@ -56,6 +56,9 @@ class TrackingService:LifecycleService() {
     var isFirstRun=true
     var serviceKilled=false
 
+    private var stopTimer=0L
+    private var speedList= mutableListOf<Double>();
+
     //lateinit var mLocation: Location // location
     private val _locations = mutableListOf<LatLng>()
 
@@ -191,6 +194,8 @@ class TrackingService:LifecycleService() {
     private fun pauseService(){
         isTracking.postValue(false)
         isTimerEnabled=false
+        speedList.clear()
+        stopTimer=0
     }
 
     // Értesítések frissítése
@@ -302,6 +307,8 @@ class TrackingService:LifecycleService() {
                             //Timber.d("Új high speed: ${highSpeed}")
 
                             actualSpeed.postValue(speed)
+
+                            stopTrackingIfTheUserStop()
                             //Timber.d("Sebesség: ${speed}")
                             //setSpeed(location)
                         }
@@ -351,6 +358,45 @@ class TrackingService:LifecycleService() {
                 }
             }
         })
+    }
+
+
+
+    private fun stopTrackingIfTheUserStop(){
+        /*if(actualSpeed<1.0){
+            stopTimer=stopTimer+1
+        }
+
+
+        if (stopTimer==10L){
+            sendCommandToService(ACTION_PAUSE_SERVICE)
+        }
+        Timber.d("Ido: ${stopTimer}")*/
+
+        if (stopTimer<10)
+        {
+            speedList.add(actualSpeed.value!!)
+            stopTimer=stopTimer+1
+            Timber.d("Ido: ${stopTimer}")
+        }
+        else {
+            if (speedList.sum() / speedList.size <= 1.5) {
+                pauseService()
+            }
+            else
+            {
+                speedList.removeAt(0)
+                speedList.add(actualSpeed.value!!)
+
+                stopTimer=stopTimer+1
+
+                Timber.d("Ido: ${stopTimer}")
+
+                Timber.d("Sebesseg: ${actualSpeed}")
+                Timber.d("Atlag: ${speedList.sum()/speedList.size}")
+            }
+        }
+
     }
 
     // Értesítése csatorna elkészítése

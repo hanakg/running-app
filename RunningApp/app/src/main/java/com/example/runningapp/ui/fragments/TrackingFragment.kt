@@ -275,7 +275,7 @@ class TrackingFragment:Fragment(R.layout.fragment_tracking) {
                 tvActualSpeed.text = "0 Km/h"
             }
 
-            stopTrackingIfTheUserStop()
+            //stopTrackingIfTheUserStop()
         })
 
         TrackingService.highSpeed.observe(viewLifecycleOwner, Observer {
