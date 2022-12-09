@@ -180,7 +180,7 @@ class CompareRunsFragment: Fragment(R.layout.fragment_compareruns) {
             tvNewMaxSpeedInfo.setTextColor(Color.RED)
 
             tvOldMaxSpeedInfo.text="Rontottál"
-            tvNewMaxSpeedInfo.text="${(oldMaxSpeed-newMaxSpeed).toString()+"km/h-val"} lassabb"
+            tvNewMaxSpeedInfo.text="${(Math.round((oldMaxSpeed-newMaxSpeed)*1000.0)/1000.0).toString()+"km/h-val"} lassabb"
         }
         else if(oldMaxSpeed<newMaxSpeed){
             tvOldMaxSpeed.setTextColor(Color.RED)
@@ -190,7 +190,7 @@ class CompareRunsFragment: Fragment(R.layout.fragment_compareruns) {
             tvNewMaxSpeedInfo.setTextColor(Color.GREEN)
 
             tvOldMaxSpeedInfo.text="Javítottál"
-            tvNewMaxSpeedInfo.text="${(newMaxSpeed-oldMaxSpeed).toString()+"km/h-val"} gyorsabb"
+            tvNewMaxSpeedInfo.text="${(Math.round((newMaxSpeed-oldMaxSpeed)*1000.0)/1000.0).toString()+"km/h-val"} gyorsabb"
         }
         else{
             tvOldMaxSpeed.setTextColor(Color.YELLOW)
